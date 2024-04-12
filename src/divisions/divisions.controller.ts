@@ -1,7 +1,9 @@
 import { Body, Controller, Param, Post } from '@nestjs/common';
 import { DivisionsService } from './divisions.service';
 import { CreateDivisionDto } from './dto/create-division.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('divisions')
 @Controller('workspaces/:workspaceId/divisions')
 export class DivisionsController {
   constructor(private readonly divisionService: DivisionsService) {}
