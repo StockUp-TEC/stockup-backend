@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { Workspace } from './entities/workspace.entity';
@@ -12,15 +12,15 @@ export class WorkspacesService {
     private workspaceRepository: Repository<Workspace>,
   ) {}
   create(createWorkspaceDto: CreateWorkspaceDto) {
-    return 'This action adds a new workspace';
+    return this.workspaceRepository.save(createWorkspaceDto);
   }
 
   async findAll() {
-    return await this.workspaceRepository.find();
+    return this.workspaceRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} workspace`;
+  async findOne(id: number) {
+    return this.workspaceRepository.findOneBy({ id: id });
   }
 
   update(id: number, updateWorkspaceDto: UpdateWorkspaceDto) {
@@ -29,5 +29,18 @@ export class WorkspacesService {
 
   remove(id: number) {
     return `This action removes a #${id} workspace`;
+  }
+
+  async getDivisions(id: number) {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: id },
+      relations: ['divisions'],
+    });
+
+    if (!workspace) {
+      throw new HttpException('Workspace not found', 404);
+    }
+
+    return workspace.divisions;
   }
 }

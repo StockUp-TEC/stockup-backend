@@ -5,20 +5,27 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { CompaniesModule } from './companies/companies.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
+import { UsersModule } from './users/users.module';
+import { UsersDivisionsModule } from './users-divisions/users-divisions.module';
+import { DivisionsModule } from './divisions/divisions.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'oracle',
-      username: 'STOCKUP',
-      password: 'hfCkueBr9Yh7Jtt',
-      connectString: 'stockup_high',
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      connectString: process.env.DB_CONNECTION_STRING,
       entities: ['dist/**/*.entity{.ts,.js}'],
       logging: true,
+      synchronize: process.env.NODE_ENV === 'dev',
     }),
     CompaniesModule,
     WorkspacesModule,
+    UsersModule,
+    UsersDivisionsModule,
+    DivisionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Division } from "../../divisions/entities/division.entity";
 
 @Entity({ name: 'WORKSPACE' })
 export class Workspace {
@@ -10,4 +11,7 @@ export class Workspace {
 
   @Column({ type: 'varchar2', name: 'DESCRIPTION' })
   description: string;
+
+  @OneToMany(() => Division, (division) => division.workspace)
+  divisions: Division[];
 }
