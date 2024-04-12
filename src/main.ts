@@ -10,6 +10,8 @@ import { DivisionsModule } from './divisions/divisions.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('StockUp API')
     .setDescription('StockUp API for FSAE Tec Racing')
