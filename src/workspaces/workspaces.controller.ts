@@ -30,6 +30,11 @@ export class WorkspacesController {
     return this.workspacesService.findOne(+id);
   }
 
+  @Get(':id/divisions')
+  getDivisions(@Param('id') id: string) {
+    return this.workspacesService.getDivisions(+id);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,
