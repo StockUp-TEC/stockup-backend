@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Workspace } from '../../workspaces/entities/workspace.entity';
 
 @Entity({ name: 'USER' })
 export class User {
@@ -7,4 +8,7 @@ export class User {
 
   @Column({ type: 'varchar2', name: 'EMAIL' })
   email: string;
+
+  @ManyToMany(() => Workspace, (workspace) => workspace.users)
+  workspaces: Workspace[];
 }

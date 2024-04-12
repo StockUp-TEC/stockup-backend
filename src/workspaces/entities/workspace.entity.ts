@@ -1,5 +1,14 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Division } from "../../divisions/entities/division.entity";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Division } from '../../divisions/entities/division.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity({ name: 'WORKSPACE' })
 export class Workspace {
@@ -14,4 +23,8 @@ export class Workspace {
 
   @OneToMany(() => Division, (division) => division.workspace)
   divisions: Division[];
+
+  @ManyToMany(() => User, (user) => user.workspaces)
+  @JoinTable()
+  users: User[];
 }

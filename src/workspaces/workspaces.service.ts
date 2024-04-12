@@ -28,7 +28,7 @@ export class WorkspacesService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} workspace`;
+    return this.workspaceRepository.delete(id);
   }
 
   async getDivisions(id: number) {
@@ -42,5 +42,13 @@ export class WorkspacesService {
     }
 
     return workspace.divisions;
+  }
+
+  addUsers(id: number, userIds: number[]) {
+    return this.workspaceRepository
+      .createQueryBuilder()
+      .relation(Workspace, 'users')
+      .of(id)
+      .add(userIds);
   }
 }

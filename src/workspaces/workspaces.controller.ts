@@ -49,4 +49,9 @@ export class WorkspacesController {
   remove(@Param('id') id: string) {
     return this.workspacesService.remove(+id);
   }
+
+  @Post(':id/users')
+  addUsers(@Param('id') id: string, @Body() userIds: number[]) {
+    return this.workspacesService.addUsers(+id, userIds);
+  }
 }
