@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { CompaniesModule } from './companies/companies.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { UsersModule } from './users/users.module';
+import { UsersDivisionsModule } from './users-divisions/users-divisions.module';
+import { DivisionsModule } from './divisions/divisions.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { UsersModule } from './users/users.module';
     CompaniesModule,
     WorkspacesModule,
     UsersModule,
+    UsersDivisionsModule,
+    DivisionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
