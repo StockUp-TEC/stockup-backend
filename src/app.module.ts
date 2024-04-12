@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { CompaniesModule } from './companies/companies.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
+import { PreauthMiddleware } from './auth/preauth.middleware';
+import { AuthService } from './services/auth/auth.service';
 
 @Module({
   imports: [
@@ -21,6 +23,10 @@ import { WorkspacesModule } from './workspaces/workspaces.module';
     WorkspacesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(PreauthMiddleware).forRoutes('*');
+  }
+}

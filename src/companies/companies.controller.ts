@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from "@nestjs/common";
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Request } from "express";
 
 @Controller('companies')
 export class CompaniesController {
@@ -13,7 +14,8 @@ export class CompaniesController {
   }
 
   @Get()
-  findAll() {
+  findAll(@Req() request: Request) {
+    console.log(request.headers);
     return this.companiesService.findAll();
   }
 
