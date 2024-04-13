@@ -10,6 +10,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { DivisionsModule } from './divisions/divisions.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { CompaniesModule } from './companies/companies.module';
+import { MailersendModule } from './mailersend/mailersend.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CompaniesModule } from './companies/companies.module';
     WorkspacesModule,
     DivisionsModule,
     CompaniesModule,
+    MailersendModule,
   ],
   controllers: [AppController],
   providers: [AppService],
