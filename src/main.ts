@@ -1,11 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { CompaniesModule } from './companies/companies.module';
-import { WorkspacesModule } from './workspaces/workspaces.module';
 import { UsersModule } from './users/users.module';
-import { UsersDivisionsModule } from './users-divisions/users-divisions.module';
-import { DivisionsModule } from './divisions/divisions.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,13 +14,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config, {
-    include: [
-      CompaniesModule,
-      WorkspacesModule,
-      UsersModule,
-      UsersDivisionsModule,
-      DivisionsModule,
-    ],
+    include: [UsersModule],
   });
   SwaggerModule.setup('api', app, document);
 

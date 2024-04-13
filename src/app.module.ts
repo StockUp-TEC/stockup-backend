@@ -3,15 +3,24 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { CompaniesModule } from './companies/companies.module';
-import { WorkspacesModule } from './workspaces/workspaces.module';
 import { UsersModule } from './users/users.module';
-import { UsersDivisionsModule } from './users-divisions/users-divisions.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { DivisionsModule } from './divisions/divisions.module';
+import { WorkspacesModule } from './workspaces/workspaces.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      sortSchema: true,
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+    }),
     TypeOrmModule.forRoot({
       type: 'oracle',
       username: process.env.DB_USER,
@@ -21,11 +30,10 @@ import { DivisionsModule } from './divisions/divisions.module';
       logging: true,
       synchronize: process.env.NODE_ENV === 'dev',
     }),
-    CompaniesModule,
-    WorkspacesModule,
     UsersModule,
-    UsersDivisionsModule,
+    WorkspacesModule,
     DivisionsModule,
+    CompaniesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
