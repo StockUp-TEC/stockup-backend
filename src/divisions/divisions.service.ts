@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Division } from './entities/division.entity';
+import { CreateDivisionInput } from './dto/create-division.input';
+import { UpdateDivisionInput } from './dto/update-division.input';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Division } from './entities/division.entity';
 import { Repository } from 'typeorm';
 import { Workspace } from '../workspaces/entities/workspace.entity';
-import { CreateDivisionDto } from './dto/create-division.dto';
 
 @Injectable()
 export class DivisionsService {
@@ -14,9 +15,32 @@ export class DivisionsService {
     private workspaceRepository: Repository<Workspace>,
   ) {}
 
+  create(createDivisionInput: CreateDivisionInput) {
+    return 'This action adds a new division';
+  }
+
+  findAll() {
+    return `This action returns all divisions`;
+  }
+
+  findOne(id: number) {
+    return this.divisionRepository.findOne({
+      where: { id },
+      relations: ['workspace'],
+    });
+  }
+
+  update(id: number, updateDivisionInput: UpdateDivisionInput) {
+    return `This action updates a #${id} division`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} division`;
+  }
+
   async addDivisionToWorkspace(
     workspaceId: number,
-    divisionData: CreateDivisionDto,
+    divisionData: CreateDivisionInput,
   ): Promise<Division> {
     const workspace = await this.workspaceRepository.findOneBy({
       id: workspaceId,

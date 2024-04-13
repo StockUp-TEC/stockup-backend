@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { DivisionsController } from './divisions.controller';
 import { DivisionsService } from './divisions.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DivisionsResolver } from './divisions.resolver';
 import { Division } from './entities/division.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Workspace } from '../workspaces/entities/workspace.entity';
 
 @Module({
@@ -10,7 +10,6 @@ import { Workspace } from '../workspaces/entities/workspace.entity';
     TypeOrmModule.forFeature([Division]),
     TypeOrmModule.forFeature([Workspace]),
   ],
-  controllers: [DivisionsController],
-  providers: [DivisionsService],
+  providers: [DivisionsResolver, DivisionsService],
 })
 export class DivisionsModule {}
