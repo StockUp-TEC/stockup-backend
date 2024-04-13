@@ -24,7 +24,10 @@ export class DivisionsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} division`;
+    return this.divisionRepository.findOne({
+      where: { id },
+      relations: ['workspace'],
+    });
   }
 
   update(id: number, updateDivisionInput: UpdateDivisionInput) {

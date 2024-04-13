@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateWorkspaceInput } from './dto/create-workspace.input';
 import { UpdateWorkspaceInput } from './dto/update-workspace.input';
 import { Workspace } from './entities/workspace.entity';
@@ -20,7 +20,9 @@ export class WorkspacesService {
   }
 
   async findOne(id: number) {
-    return this.workspaceRepository.findOneBy({ id: id });
+    return this.workspaceRepository.findOne({
+      where: { id },
+    });
   }
 
   update(id: number, updateWorkspaceInput: UpdateWorkspaceInput) {
@@ -30,19 +32,6 @@ export class WorkspacesService {
   remove(id: number) {
     return this.workspaceRepository.delete(id);
   }
-
-  // async getDivisions(id: number) {
-  //   const workspace = await this.workspaceRepository.findOne({
-  //     where: { id: id },
-  //     relations: ['divisions'],
-  //   });
-  //
-  //   if (!workspace) {
-  //     throw new HttpException('Workspace not found', 404);
-  //   }
-  //
-  //   return workspace.divisions;
-  // }
 
   addUsers(id: number, userIds: number[]) {
     return this.workspaceRepository

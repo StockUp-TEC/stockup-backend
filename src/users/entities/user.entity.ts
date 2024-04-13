@@ -14,6 +14,6 @@ export class User {
   email: string;
 
   @ManyToMany(() => Workspace, (workspace) => workspace.users)
-  @Field(() => [Workspace])
+  @Field(() => [Workspace], { nullable: true })
   workspaces: Workspace[];
 }

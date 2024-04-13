@@ -17,11 +17,14 @@ export class UsersService {
   }
 
   async findAll() {
-    return await this.userRepository.find();
+    return await this.userRepository.find({ relations: ['workspaces'] });
   }
 
   async findOne(id: number) {
-    return await this.userRepository.findOne({ where: { id } });
+    return await this.userRepository.findOne({
+      where: { id },
+      relations: ['workspaces'],
+    });
   }
 
   async update(id: number, updateUserDto: UpdateUserInput) {
@@ -30,12 +33,5 @@ export class UsersService {
 
   async remove(id: number) {
     return await this.userRepository.delete(id);
-  }
-
-  getWorkspaces(userId: number) {
-    return this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['workspaces'],
-    });
   }
 }

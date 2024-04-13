@@ -3,10 +3,10 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  // OneToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-// import { Division } from '../../divisions/entities/division.entity';
+import { Division } from '../../divisions/entities/division.entity';
 import { User } from '../../users/entities/user.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
@@ -25,11 +25,12 @@ export class Workspace {
   @Field(() => String)
   description: string;
 
-  // @OneToMany(() => Division, (division) => division.workspace)
-  // divisions: Division[];
+  @OneToMany(() => Division, (division) => division.workspace, { eager: true })
+  @Field(() => [Division], { nullable: true })
+  divisions: Division[];
 
-  @ManyToMany(() => User, (user) => user.workspaces)
+  @ManyToMany(() => User, (user) => user.workspaces, { eager: true })
   @JoinTable()
-  @Field(() => [User])
+  @Field(() => [User], { nullable: true })
   users: User[];
 }
