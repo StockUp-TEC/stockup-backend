@@ -9,7 +9,6 @@ import {
 import { Division } from '../../divisions/entities/division.entity';
 import { User } from '../../users/entities/user.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Role } from '../../roles/entities/role.entity';
 
 @Entity({ name: 'WORKSPACE' })
 @ObjectType()
