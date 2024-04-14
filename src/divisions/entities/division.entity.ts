@@ -28,10 +28,6 @@ export class Division {
   @Field(() => String)
   description: string;
 
-  @Column({ name: 'WORKSPACE_ID' })
-  @Field(() => ID)
-  workspaceId: number;
-
   @ManyToOne(() => Workspace, (workspace) => workspace.id)
   @JoinColumn({ name: 'WORKSPACE_ID' })
   @Field(() => Workspace)

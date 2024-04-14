@@ -11,6 +11,11 @@ import { DivisionsModule } from './divisions/divisions.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { CompaniesModule } from './companies/companies.module';
 import { MailersendModule } from './mailersend/mailersend.module';
+import { RolepermissionsModule } from './rolepermissions/rolepermissions.module';
+import { RolesModule } from './roles/roles.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { PermissionTypesModule } from './permission-types/permission-types.module';
+import { PermissionGroupsModule } from './permission-groups/permission-groups.module';
 
 @Module({
   imports: [
@@ -36,6 +41,11 @@ import { MailersendModule } from './mailersend/mailersend.module';
     DivisionsModule,
     CompaniesModule,
     MailersendModule,
+    RolepermissionsModule,
+    RolesModule,
+    PermissionsModule,
+    PermissionTypesModule,
+    PermissionGroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
