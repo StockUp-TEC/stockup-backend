@@ -21,6 +21,10 @@ export class User {
   @Field(() => String)
   email: string;
 
+  @Column({ type: 'varchar2', name: 'NAME' })
+  @Field(() => String)
+  name: string;
+
   @ManyToMany(() => Workspace, (workspace) => workspace.users)
   @Field(() => [Workspace])
   workspaces: Workspace[];
