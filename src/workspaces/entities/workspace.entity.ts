@@ -21,16 +21,20 @@ export class Workspace {
   @Field(() => String)
   name: string;
 
-  @Column({ type: 'varchar2', name: 'DESCRIPTION' })
+  @Column({ type: 'varchar2', name: 'DESCRIPTION', length: 1024 })
   @Field(() => String)
   description: string;
 
   @OneToMany(() => Division, (division) => division.workspace, { eager: true })
-  @Field(() => [Division], { nullable: true })
+  @Field(() => [Division], { defaultValue: [] })
   divisions: Division[];
 
   @ManyToMany(() => User, (user) => user.workspaces, { eager: true })
-  @JoinTable()
-  @Field(() => [User], { nullable: true })
+  @JoinTable({
+    name: 'USER_WORKSPACE',
+    joinColumn: { name: 'WORKSPACE_ID', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'USER_ID', referencedColumnName: 'id' },
+  })
+  @Field(() => [User], { defaultValue: [] })
   users: User[];
 }

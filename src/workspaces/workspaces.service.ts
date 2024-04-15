@@ -20,9 +20,13 @@ export class WorkspacesService {
   }
 
   async findOne(id: number) {
-    return this.workspaceRepository.findOne({
+    const workspace = await this.workspaceRepository.findOne({
       where: { id },
     });
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+    return workspace;
   }
 
   update(id: number, updateWorkspaceInput: UpdateWorkspaceInput) {

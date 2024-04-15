@@ -11,6 +11,11 @@ import { DivisionsModule } from './divisions/divisions.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { CompaniesModule } from './companies/companies.module';
 import { MailersendModule } from './mailersend/mailersend.module';
+import { RolesModule } from './roles/roles.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { PermissionGroupsModule } from './permission-groups/permission-groups.module';
+import { UserDivisionsModule } from './user-divisions/user-divisions.module';
+import { UserWorkspacesModule } from './user-workspaces/user-workspaces.module';
 
 @Module({
   imports: [
@@ -29,13 +34,18 @@ import { MailersendModule } from './mailersend/mailersend.module';
       connectString: process.env.DB_CONNECTION_STRING,
       entities: ['dist/**/*.entity{.ts,.js}'],
       logging: true,
-      synchronize: process.env.NODE_ENV === 'dev',
+      synchronize: false,
     }),
     UsersModule,
     WorkspacesModule,
     DivisionsModule,
     CompaniesModule,
     MailersendModule,
+    RolesModule,
+    PermissionsModule,
+    PermissionGroupsModule,
+    UserDivisionsModule,
+    UserWorkspacesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

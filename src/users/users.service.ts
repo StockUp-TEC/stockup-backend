@@ -21,10 +21,35 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    return await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { id },
       relations: ['workspaces'],
     });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // // For each workspace, only keep the division that the user is in
+    // user.workspaces.forEach((workspace) => {
+    //   workspace.divisions = workspace.divisions.filter((division) => {
+    //     console.log(division.name);
+    //     console.log(division.userDivisions);
+    //     if (!division.userDivisions) {
+    //       return false;
+    //     }
+    //
+    //     const userDivision = division.userDivisions.find(
+    //       (userDivision) => userDivision.user.id === id,
+    //     );
+    //     if (userDivision) {
+    //       division.userDivisions = [userDivision];
+    //       return true;
+    //     }
+    //     return false;
+    //   });
+    // });
+
+    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserInput) {

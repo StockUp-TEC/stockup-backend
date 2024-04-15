@@ -20,13 +20,21 @@ export class DivisionsService {
   }
 
   findAll() {
-    return `This action returns all divisions`;
+    return this.divisionRepository.find({
+      relations: {
+        workspace: true,
+        userDivisions: true,
+      },
+    });
   }
 
   findOne(id: number) {
     return this.divisionRepository.findOne({
       where: { id },
-      relations: ['workspace'],
+      relations: {
+        workspace: true,
+        userDivisions: true,
+      },
     });
   }
 
@@ -51,7 +59,7 @@ export class DivisionsService {
 
     const division = this.divisionRepository.create({
       ...divisionData,
-      workspace: workspace,
+      // workspace: workspace,
     });
     return this.divisionRepository.save(division);
   }
