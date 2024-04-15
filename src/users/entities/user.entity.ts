@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -9,6 +8,7 @@ import {
 import { Workspace } from '../../workspaces/entities/workspace.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { UserDivision } from '../../user-divisions/entities/user-division.entity';
+import { Company } from '../../companies/entities/company.entity';
 
 @Entity({ name: 'USER' })
 @ObjectType()
@@ -27,4 +27,7 @@ export class User {
 
   @OneToMany(() => UserDivision, (userDivision) => userDivision.user)
   userDivisions: UserDivision[];
+
+  @ManyToMany(() => Company, (company) => company.users)
+  companies: Company[];
 }

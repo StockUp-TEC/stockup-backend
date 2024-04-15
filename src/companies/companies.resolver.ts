@@ -39,4 +39,20 @@ export class CompaniesResolver {
   removeCompany(@Args('id', { type: () => Int }) id: number) {
     return this.companiesService.remove(id);
   }
+
+  @Mutation(() => Boolean)
+  addUserToCompany(
+    @Args('userId', { type: () => Int }) userId: number,
+    @Args('companyId', { type: () => Int }) companyId: number,
+  ) {
+    return this.companiesService.addUserToCompany(userId, companyId);
+  }
+
+  @Mutation(() => Boolean)
+  removeUserFromCompany(
+    @Args('userId', { type: () => Int }) userId: number,
+    @Args('companyId', { type: () => Int }) companyId: number,
+  ) {
+    return this.companiesService.removeUserFromCompany(userId, companyId);
+  }
 }
