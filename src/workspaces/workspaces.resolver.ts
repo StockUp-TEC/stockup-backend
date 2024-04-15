@@ -46,4 +46,12 @@ export class WorkspacesResolver {
   ) {
     return this.workspacesService.addUsers(id, userIds);
   }
+
+  @Mutation(() => Boolean)
+  async addCompaniesToWorkspace(
+    @Args('workspaceId', { type: () => Int }) id: number,
+    @Args('companyIds', { type: () => [Int] }) companyIds: number[],
+  ) {
+    return this.workspacesService.addCompaniesToWorkspace(id, companyIds);
+  }
 }

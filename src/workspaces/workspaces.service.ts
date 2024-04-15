@@ -44,4 +44,13 @@ export class WorkspacesService {
       .of(id)
       .add(userIds);
   }
+
+  async addCompaniesToWorkspace(id: number, companyIds: number[]) {
+    await this.workspaceRepository
+      .createQueryBuilder()
+      .relation(Workspace, 'companies')
+      .of(id)
+      .add(companyIds);
+    return true;
+  }
 }

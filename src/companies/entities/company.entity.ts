@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { User } from '../../users/entities/user.entity';
+import { Workspace } from '../../workspaces/entities/workspace.entity';
 
 @Entity({ name: 'COMPANY' })
 @ObjectType()
@@ -27,4 +28,7 @@ export class Company {
   })
   @Field(() => [User], { defaultValue: [] })
   users: User[];
+
+  @ManyToMany(() => Workspace, (workspace) => workspace.companies)
+  workspaces: Workspace[];
 }
