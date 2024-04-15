@@ -16,8 +16,11 @@ export class UsersService {
     return await this.userRepository.save(createUserDto);
   }
 
-  async findAll() {
-    return await this.userRepository.find({ relations: ['workspaces'] });
+  async findAll(first?: number) {
+    return await this.userRepository.find({
+      take: first,
+      relations: ['workspaces'],
+    });
   }
 
   async findOne(id: number) {

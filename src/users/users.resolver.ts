@@ -14,8 +14,8 @@ export class UsersResolver {
   }
 
   @Query(() => [User], { name: 'users' })
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Args('first', { type: () => Int, nullable: true }) first: number) {
+    return this.usersService.findAll(first);
   }
 
   @Query(() => User, { name: 'user' })
