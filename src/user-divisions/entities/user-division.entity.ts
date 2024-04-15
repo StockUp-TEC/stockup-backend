@@ -1,0 +1,28 @@
+import { Entity, Column, ManyToOne, PrimaryColumn, JoinColumn } from 'typeorm';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { User } from '../../users/entities/user.entity';
+import { Division } from '../../divisions/entities/division.entity';
+
+@Entity('USER_DIVISION')
+@ObjectType()
+export class UserDivision {
+  @PrimaryColumn({ name: 'USER_ID' })
+  @Field(() => ID)
+  userId: number;
+
+  @PrimaryColumn({ name: 'DIVISION_ID' })
+  @Field(() => ID)
+  divisionId: number;
+
+  @Column({ name: 'IS_ADMIN', default: false })
+  @Field(() => Boolean)
+  isAdmin: boolean;
+
+  @ManyToOne(() => User, (user) => user.userDivisions)
+  @JoinColumn({ name: 'USER_ID', referencedColumnName: 'id' })
+  user: User;
+
+  @ManyToOne(() => Division, (division) => division.userDivisions)
+  @JoinColumn({ name: 'DIVISION_ID' })
+  division: Division;
+}

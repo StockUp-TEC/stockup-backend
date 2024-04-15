@@ -3,7 +3,6 @@ import { Workspace } from './entities/workspace.entity';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceInput } from './dto/create-workspace.input';
 import { UpdateWorkspaceInput } from './dto/update-workspace.input';
-import { Body, Param, Post } from '@nestjs/common';
 
 @Resolver(() => Workspace)
 export class WorkspacesResolver {

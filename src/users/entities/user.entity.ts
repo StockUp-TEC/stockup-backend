@@ -1,13 +1,14 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { UserDivision } from '../../user-division/user-division.entity';
+import { UserDivision } from '../../user-divisions/entities/user-division.entity';
 
 @Entity({ name: 'USER' })
 @ObjectType()
@@ -25,6 +26,5 @@ export class User {
   workspaces: Workspace[];
 
   @OneToMany(() => UserDivision, (userDivision) => userDivision.user)
-  @Field(() => [UserDivision])
   userDivisions: UserDivision[];
 }

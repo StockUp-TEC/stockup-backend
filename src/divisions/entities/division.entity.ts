@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { UserDivision } from '../../user-divisions/entities/user-division.entity';
 
 @Entity({ name: 'DIVISION' })
 @ObjectType()
@@ -28,8 +30,19 @@ export class Division {
   @Field(() => String)
   description: string;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.id)
+  // Column that references the workspace ID
+  @Column({ name: 'WORKSPACE_ID' })
+  workspaceId: number;
+
+  // Many-to-one relationship with the workspace entity
+  @ManyToOne(() => Workspace, (workspace) => workspace.divisions)
   @JoinColumn({ name: 'WORKSPACE_ID' })
-  @Field(() => Workspace)
   workspace: Workspace;
+
+  // One-to-many relationship with the user-division entity
+  @OneToMany(() => UserDivision, (userDivision) => userDivision.division, {
+    eager: true,
+  })
+  @Field(() => [UserDivision])
+  userDivisions: UserDivision[];
 }
