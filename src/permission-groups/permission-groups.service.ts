@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePermissionGroupInput } from './dto/create-permission-group.input';
-import { UpdatePermissionGroupInput } from './dto/update-permission-group.input';
+import { PermissionGroup } from './entities/permission-group.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PermissionGroupsService {
+  constructor(
+    @InjectRepository(PermissionGroup)
+    private permissionGroupRepository: Repository<PermissionGroup>,
+  ) {}
+
   create(createPermissionGroupInput: CreatePermissionGroupInput) {
-    return 'This action adds a new permissionGroup';
+    return this.permissionGroupRepository.save(createPermissionGroupInput);
   }
 
   findAll() {
-    return `This action returns all permissionGroups`;
+    return this.permissionGroupRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} permissionGroup`;
-  }
-
-  update(id: number, updatePermissionGroupInput: UpdatePermissionGroupInput) {
-    return `This action updates a #${id} permissionGroup`;
+    return this.permissionGroupRepository.findOne({
+      where: { id },
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} permissionGroup`;
+    return this.permissionGroupRepository.delete(id);
   }
 }
