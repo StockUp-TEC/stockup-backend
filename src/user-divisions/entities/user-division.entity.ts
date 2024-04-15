@@ -7,19 +7,18 @@ import { Division } from '../../divisions/entities/division.entity';
 @ObjectType()
 export class UserDivision {
   @PrimaryColumn({ name: 'USER_ID' })
-  @Field(() => ID)
   userId: number;
 
   @PrimaryColumn({ name: 'DIVISION_ID' })
-  @Field(() => ID)
   divisionId: number;
 
   @Column({ name: 'IS_ADMIN', default: false })
   @Field(() => Boolean)
   isAdmin: boolean;
 
-  @ManyToOne(() => User, (user) => user.userDivisions)
+  @ManyToOne(() => User, (user) => user.userDivisions, { eager: true })
   @JoinColumn({ name: 'USER_ID', referencedColumnName: 'id' })
+  @Field(() => User)
   user: User;
 
   @ManyToOne(() => Division, (division) => division.userDivisions)

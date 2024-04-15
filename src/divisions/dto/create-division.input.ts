@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, ID } from '@nestjs/graphql';
 
 @InputType()
 export class CreateDivisionInput {
@@ -7,4 +7,7 @@ export class CreateDivisionInput {
 
   @Field(() => String)
   public description: string;
+
+  @Field(() => ID)
+  public workspaceId: number;
 }

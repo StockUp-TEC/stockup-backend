@@ -12,7 +12,7 @@ export class UserDivisionsResolver {
   assignUserToDivision(
     @Args('createUserDivisionInput')
     createUserDivisionInput: CreateUserDivisionInput,
-  ): Promise<UserDivision> {
+  ) {
     return this.userDivisionService.assignUserToDivision(
       createUserDivisionInput,
     );

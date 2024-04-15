@@ -43,6 +43,6 @@ export class Division {
   @OneToMany(() => UserDivision, (userDivision) => userDivision.division, {
     eager: true,
   })
-  @Field(() => [UserDivision])
+  @Field(() => [UserDivision], { name: 'users' })
   userDivisions: UserDivision[];
 }

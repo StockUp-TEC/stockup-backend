@@ -16,7 +16,7 @@ export class DivisionsService {
   ) {}
 
   create(createDivisionInput: CreateDivisionInput) {
-    return 'This action adds a new division';
+    return this.divisionRepository.save(createDivisionInput);
   }
 
   findAll() {

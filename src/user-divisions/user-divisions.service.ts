@@ -48,7 +48,8 @@ export class UserDivisionsService {
       isAdmin: input.isAdmin,
     });
 
-    return this.userDivisionRepository.save(newUserDivision);
+    await this.userDivisionRepository.save(newUserDivision);
+    return true;
   }
 
   async updateUserDivisionAdminStatus(input: UpdateUserDivisionInput) {
