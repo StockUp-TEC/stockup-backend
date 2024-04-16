@@ -15,7 +15,7 @@ export class UsersResolver {
     return this.usersService.create(createUserInput);
   }
 
-  @UseGuards(GqlAuthGuard)
+  // @UseGuards(GqlAuthGuard)
   @Query(() => [User], { name: 'users' })
   findAll(@Args('first', { type: () => Int, nullable: true }) first: number) {
     return this.usersService.findAll(first);
