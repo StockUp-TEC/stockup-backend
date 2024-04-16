@@ -16,6 +16,7 @@ import { PermissionsModule } from './permissions/permissions.module';
 import { PermissionGroupsModule } from './permission-groups/permission-groups.module';
 import { UserDivisionsModule } from './user-divisions/user-divisions.module';
 import { UserWorkspacesModule } from './user-workspaces/user-workspaces.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { UserWorkspacesModule } from './user-workspaces/user-workspaces.module';
     PermissionGroupsModule,
     UserDivisionsModule,
     UserWorkspacesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
