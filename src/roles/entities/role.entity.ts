@@ -27,6 +27,9 @@ export class Role {
   @Field(() => ID)
   workspaceId: number;
 
+  @Column({ name: 'AUTH0_ROLE_ID' })
+  auth0RoleId: string;
+
   @ManyToMany(() => Permission)
   @JoinTable({
     name: 'ROLE_PERMISSION',
