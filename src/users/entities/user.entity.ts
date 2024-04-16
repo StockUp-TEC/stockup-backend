@@ -25,6 +25,9 @@ export class User {
   @Field(() => String)
   name: string;
 
+  @Column({ type: 'varchar2', name: 'AUTH_PROVIDER_ID' })
+  authProviderId: string;
+
   @ManyToMany(() => Workspace, (workspace) => workspace.users)
   @Field(() => [Workspace])
   workspaces: Workspace[];

@@ -1,10 +1,9 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { GqlAuthGuard } from '../auth/gql-auth.guard';
 
 @Resolver(() => User)
@@ -35,5 +34,16 @@ export class UsersResolver {
   @Mutation(() => User)
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.remove(id);
+  }
+
+  // Get authenticated user
+  @UseGuards(GqlAuthGuard)
+  @Query(() => User, { name: 'me' })
+  async me(@Context() context) {
+    const authId = context.req.user.sub;
+    if (!authId) {
+      throw new Error('User not found: no authId in context');
+    }
+    return this.usersService.me(authId);
   }
 }
