@@ -30,11 +30,12 @@ export class Role {
   @Column({ name: 'AUTH0_ROLE_ID' })
   auth0RoleId: string;
 
-  @ManyToMany(() => Permission)
+  @ManyToMany(() => Permission, { eager: true })
   @JoinTable({
     name: 'ROLE_PERMISSION',
     joinColumn: { name: 'ROLE_ID' },
     inverseJoinColumn: { name: 'PERMISSION_ID' },
   })
+  @Field(() => [Permission])
   permissions: Permission[];
 }

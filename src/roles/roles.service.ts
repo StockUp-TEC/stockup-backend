@@ -23,6 +23,7 @@ export class RolesService {
     const auth0RoleId = await this.addRoleToAuth0(createRoleInput, permissions);
     const role = this.roleRepository.create({
       ...createRoleInput,
+      permissions: permissions,
       auth0RoleId: auth0RoleId,
     });
     return await this.roleRepository.save(role);
