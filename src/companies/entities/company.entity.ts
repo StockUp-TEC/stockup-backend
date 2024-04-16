@@ -20,7 +20,7 @@ export class Company {
   @Field(() => String)
   name: string;
 
-  @ManyToMany(() => User, (user) => user.companies)
+  @ManyToMany(() => User, (user) => user.companies, { eager: true })
   @JoinTable({
     name: 'USER_COMPANY',
     joinColumn: { name: 'COMPANY_ID' },
