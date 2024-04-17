@@ -5,12 +5,12 @@ export class UpdateRoleInput {
   @Field(() => ID)
   id: number;
 
-  @Field(() => String)
-  name: string;
+  @Field(() => String, { nullable: true })
+  name?: string;
 
-  @Field(() => String)
-  description: string;
+  @Field(() => String, { nullable: true })
+  description?: string;
 
-  @Field(() => [ID])
-  permissionIds: number[];
+  @Field(() => [ID], { nullable: true })
+  permissionIds?: number[];
 }

@@ -42,24 +42,34 @@ export class RolesService {
   }
 
   async update(id: number, updateRoleInput: UpdateRoleInput) {
-    const permissions = await this.permissionsService.findPermissionsWithIds(
-      updateRoleInput.permissionIds,
-    );
     const role = await this.roleRepository.findOneBy({ id });
     if (!role) {
       throw new Error('Role not found');
     }
+    // Update only the fields that are present in the updateRoleInput
+    role.name = updateRoleInput.name || role.name;
+    role.description = updateRoleInput.description || role.description;
+    const oldPermissions = role.permissions;
+    if (updateRoleInput.permissionIds) {
+      const newPermissions =
+        await this.permissionsService.findPermissionsWithIds(
+          updateRoleInput.permissionIds,
+        );
+      role.permissions = newPermissions;
+      await this.updateRoleInAuth0(
+        role.auth0RoleId,
+        updateRoleInput,
+        oldPermissions,
+        newPermissions,
+      );
+    } else {
+      await this.updateRoleInAuth0(
+        role.auth0RoleId,
+        updateRoleInput,
+        oldPermissions,
+      );
+    }
 
-    await this.updateRoleInAuth0(
-      role.auth0RoleId,
-      updateRoleInput,
-      role.permissions,
-      permissions,
-    );
-
-    role.name = updateRoleInput.name;
-    role.description = updateRoleInput.description;
-    role.permissions = permissions;
     return await this.roleRepository.save(role);
   }
 
@@ -190,7 +200,7 @@ export class RolesService {
     roleId: string,
     updateRoleInput: UpdateRoleInput,
     oldPermissions: Permission[],
-    newPermissions: Permission[],
+    newPermissions?: Permission[],
   ) {
     const data = JSON.stringify({
       name: updateRoleInput.name,
@@ -209,16 +219,18 @@ export class RolesService {
     };
 
     try {
-      const oldAuth0Permissions = oldPermissions.map((permission) => ({
-        resource_server_identifier: process.env.AUTH0_AUDIENCE,
-        permission_name: permission.name,
-      }));
-      const newAuth0Permissions = newPermissions.map((permission) => ({
-        resource_server_identifier: process.env.AUTH0_AUDIENCE,
-        permission_name: permission.name,
-      }));
-      await this.removePermissionsFromAuth0Role(roleId, oldAuth0Permissions);
-      await this.addPermissionsToAuth0Role(roleId, newAuth0Permissions);
+      if (newPermissions) {
+        const oldAuth0Permissions = oldPermissions.map((permission) => ({
+          resource_server_identifier: process.env.AUTH0_AUDIENCE,
+          permission_name: permission.name,
+        }));
+        const newAuth0Permissions = newPermissions.map((permission) => ({
+          resource_server_identifier: process.env.AUTH0_AUDIENCE,
+          permission_name: permission.name,
+        }));
+        await this.removePermissionsFromAuth0Role(roleId, oldAuth0Permissions);
+        await this.addPermissionsToAuth0Role(roleId, newAuth0Permissions);
+      }
       const response = await axios.request(config);
       return response.data;
     } catch (e) {
