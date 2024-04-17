@@ -55,4 +55,12 @@ export class CompaniesResolver {
   ) {
     return this.companiesService.removeUserFromCompany(userId, companyId);
   }
+
+  @Mutation(() => Boolean)
+  updateCompanyUsers(
+    @Args('companyId', { type: () => Int }) companyId: number,
+    @Args('userIds', { type: () => [Int] }) userIds: number[],
+  ) {
+    return this.companiesService.updateCompanyUsers(companyId, userIds);
+  }
 }

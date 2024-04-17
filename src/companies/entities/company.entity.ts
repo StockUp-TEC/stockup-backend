@@ -20,6 +20,10 @@ export class Company {
   @Field(() => String)
   name: string;
 
+  @Column({ type: 'varchar2', name: 'DESCRIPTION' })
+  @Field(() => String)
+  description: string;
+
   @ManyToMany(() => User, (user) => user.companies, { eager: true })
   @JoinTable({
     name: 'USER_COMPANY',
