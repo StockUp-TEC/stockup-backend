@@ -34,7 +34,11 @@ export class RolesService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} role`;
+    return this.roleRepository.findOneBy({ id });
+  }
+
+  getRoleByWorkspaceId(workspaceId: number) {
+    return this.roleRepository.find({ where: { workspaceId } });
   }
 
   update(id: number, updateRoleInput: UpdateRoleInput) {

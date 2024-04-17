@@ -23,6 +23,13 @@ export class RolesResolver {
     return this.rolesService.findOne(id);
   }
 
+  @Query(() => [Role], { name: 'rolesByWorkspaceId' })
+  getRoleByWorkspaceId(
+    @Args('workspaceId', { type: () => Int }) workspaceId: number,
+  ) {
+    return this.rolesService.getRoleByWorkspaceId(workspaceId);
+  }
+
   @Mutation(() => Role)
   updateRole(@Args('updateRoleInput') updateRoleInput: UpdateRoleInput) {
     return this.rolesService.update(updateRoleInput.id, updateRoleInput);
