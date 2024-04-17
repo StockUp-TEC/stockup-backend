@@ -41,8 +41,26 @@ export class RolesService {
     return this.roleRepository.find({ where: { workspaceId } });
   }
 
-  update(id: number, updateRoleInput: UpdateRoleInput) {
-    return `This action updates a #${id} role`;
+  async update(id: number, updateRoleInput: UpdateRoleInput) {
+    const permissions = await this.permissionsService.findPermissionsWithIds(
+      updateRoleInput.permissionIds,
+    );
+    const role = await this.roleRepository.findOneBy({ id });
+    if (!role) {
+      throw new Error('Role not found');
+    }
+
+    await this.updateRoleInAuth0(
+      role.auth0RoleId,
+      updateRoleInput,
+      role.permissions,
+      permissions,
+    );
+
+    role.name = updateRoleInput.name;
+    role.description = updateRoleInput.description;
+    role.permissions = permissions;
+    return await this.roleRepository.save(role);
   }
 
   async remove(id: number) {
@@ -54,6 +72,8 @@ export class RolesService {
     await this.roleRepository.delete(id);
     return true;
   }
+
+  /// Auth0
 
   async addRoleToAuth0(
     createRoleInput: CreateRoleInput,
@@ -91,13 +111,13 @@ export class RolesService {
 
   async addPermissionsToAuth0Role(
     roleId: string,
-    permissionIds: {
+    permissions: {
       resource_server_identifier: string;
       permission_name: string;
     }[],
   ) {
     const data = JSON.stringify({
-      permissions: permissionIds,
+      permissions: permissions,
     });
     const config = {
       method: 'post',
@@ -119,6 +139,35 @@ export class RolesService {
     }
   }
 
+  async removePermissionsFromAuth0Role(
+    roleId: string,
+    permissions: {
+      resource_server_identifier: string;
+      permission_name: string;
+    }[],
+  ) {
+    const data = JSON.stringify({
+      permissions: permissions,
+    });
+    const config = {
+      method: 'delete',
+      maxBodyLength: Infinity,
+      url: `https://dev-i75q7owwpb0zkbdl.us.auth0.com/api/v2/roles/${roleId}/permissions`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + process.env.AUTH0_MANAGEMENT_TOKEN,
+      },
+      data: data,
+    };
+
+    try {
+      const response = await axios.request(config);
+      return response.data;
+    } catch (e) {
+      throw new Error('Failed to remove permissions from Auth0 role' + e);
+    }
+  }
+
   async removeRoleFromAuth0(roleId: string) {
     const config = {
       method: 'delete',
@@ -134,6 +183,46 @@ export class RolesService {
       return response.data;
     } catch (e) {
       throw new Error('Failed to remove role from Auth0: ' + e);
+    }
+  }
+
+  async updateRoleInAuth0(
+    roleId: string,
+    updateRoleInput: UpdateRoleInput,
+    oldPermissions: Permission[],
+    newPermissions: Permission[],
+  ) {
+    const data = JSON.stringify({
+      name: updateRoleInput.name,
+      description: updateRoleInput.description,
+    });
+    const config = {
+      method: 'patch',
+      maxBodyLength: Infinity,
+      url: 'https://dev-i75q7owwpb0zkbdl.us.auth0.com/api/v2/roles/' + roleId,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + process.env.AUTH0_MANAGEMENT_TOKEN,
+      },
+      data: data,
+    };
+
+    try {
+      const oldAuth0Permissions = oldPermissions.map((permission) => ({
+        resource_server_identifier: process.env.AUTH0_AUDIENCE,
+        permission_name: permission.name,
+      }));
+      const newAuth0Permissions = newPermissions.map((permission) => ({
+        resource_server_identifier: process.env.AUTH0_AUDIENCE,
+        permission_name: permission.name,
+      }));
+      await this.removePermissionsFromAuth0Role(roleId, oldAuth0Permissions);
+      await this.addPermissionsToAuth0Role(roleId, newAuth0Permissions);
+      const response = await axios.request(config);
+      return response.data;
+    } catch (e) {
+      throw new Error('Failed to update role in Auth0: ' + e);
     }
   }
 }

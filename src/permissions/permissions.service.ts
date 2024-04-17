@@ -39,7 +39,7 @@ export class PermissionsService {
         id: permissionId,
       });
       if (!permission) {
-        throw new Error('Permission not found');
+        throw new Error(`Permission with id: ${permissionId} not found`);
       }
 
       rolePermissions.push(permission);
