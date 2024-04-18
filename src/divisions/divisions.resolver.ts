@@ -8,12 +8,12 @@ import { UpdateDivisionInput } from './dto/update-division.input';
 export class DivisionsResolver {
   constructor(private readonly divisionsService: DivisionsService) {}
 
-  @Mutation(() => Division)
-  createDivision(
-    @Args('createDivisionInput') createDivisionInput: CreateDivisionInput,
-  ) {
-    return this.divisionsService.create(createDivisionInput);
-  }
+  // @Mutation(() => Division)
+  // createDivision(
+  //   @Args('createDivisionInput') createDivisionInput: CreateDivisionInput,
+  // ) {
+  //   return this.divisionsService.create(createDivisionInput);
+  // }
 
   @Query(() => [Division], { name: 'divisions' })
   findAll() {
@@ -42,12 +42,8 @@ export class DivisionsResolver {
 
   @Mutation(() => Division)
   addDivisionToWorkspace(
-    @Args('workspaceId', { type: () => Int }) workspaceId: number,
     @Args('divisionData') divisionData: CreateDivisionInput,
   ) {
-    return this.divisionsService.addDivisionToWorkspace(
-      workspaceId,
-      divisionData,
-    );
+    return this.divisionsService.addDivisionToWorkspace(divisionData);
   }
 }

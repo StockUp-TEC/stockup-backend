@@ -15,9 +15,9 @@ export class DivisionsService {
     private workspaceRepository: Repository<Workspace>,
   ) {}
 
-  create(createDivisionInput: CreateDivisionInput) {
-    return this.divisionRepository.save(createDivisionInput);
-  }
+  // create(createDivisionInput: CreateDivisionInput) {
+  //   return this.divisionRepository.save(createDivisionInput);
+  // }
 
   findAll() {
     return this.divisionRepository.find({
@@ -47,11 +47,10 @@ export class DivisionsService {
   }
 
   async addDivisionToWorkspace(
-    workspaceId: number,
     divisionData: CreateDivisionInput,
   ): Promise<Division> {
     const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
+      id: divisionData.workspaceId,
     });
     if (!workspace) {
       throw new Error('Workspace not found');
@@ -59,7 +58,7 @@ export class DivisionsService {
 
     const division = this.divisionRepository.create({
       ...divisionData,
-      // workspace: workspace,
+      workspace: workspace,
     });
     return this.divisionRepository.save(division);
   }
