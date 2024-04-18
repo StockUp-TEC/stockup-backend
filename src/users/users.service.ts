@@ -22,10 +22,10 @@ export class UsersService {
   ) {}
 
   async create(createUserInput: CreateUserInput) {
-    const { email, name, studentId, roleId, workspaceId } = createUserInput;
+    const { email, studentId, roleId, workspaceId } = createUserInput;
 
     // Create and save the user
-    const user = this.userRepository.create({ email, name, studentId });
+    const user = this.userRepository.create({ email, studentId });
     await this.userRepository.save(user);
 
     // Find the workspace and role by their IDs
@@ -76,6 +76,17 @@ export class UsersService {
     return user;
   }
 
+  async findUserByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
+  }
+
   async me(authId: string) {
     const user = await this.userRepository.findOne({
       where: { authProviderId: authId },
@@ -89,7 +100,8 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserInput) {
-    return await this.userRepository.update(id, updateUserDto);
+    await this.userRepository.update(id, updateUserDto);
+    return await this.userRepository.findOneBy({ id });
   }
 
   async remove(id: number) {

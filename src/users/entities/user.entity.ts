@@ -23,7 +23,7 @@ export class User {
   email: string;
 
   @Column({ type: 'varchar2', name: 'NAME' })
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   name: string;
 
   @Column({ type: 'varchar2', name: 'STUDENT_ID' })
@@ -34,7 +34,7 @@ export class User {
   authProviderId: string;
 
   @ManyToMany(() => Workspace, (workspace) => workspace.users)
-  @Field(() => [Workspace])
+  @Field(() => [Workspace], { defaultValue: [] })
   workspaces: Workspace[];
 
   @OneToMany(() => UserDivision, (userDivision) => userDivision.user)
