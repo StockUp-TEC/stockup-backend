@@ -43,7 +43,7 @@ export class DivisionsService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} division`;
+    return this.divisionRepository.delete(id);
   }
 
   async addDivisionToWorkspace(
