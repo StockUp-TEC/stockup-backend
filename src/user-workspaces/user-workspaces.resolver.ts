@@ -18,7 +18,7 @@ export class UserWorkspacesResolver {
   //   );
   // }
 
-  @Mutation(() => UserWorkspace)
+  @Mutation(() => [UserWorkspace])
   assignUsersToWorkspace(
     @Args('createUserWorkspaceInput')
     createUserWorkspaceInput: CreateUserWorkspaceInput,
