@@ -1,13 +1,11 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { UserDivisionInput } from './user-division.input';
 
 @InputType()
 export class CreateUserDivisionInput {
   @Field(() => Int)
-  userId: number;
-
-  @Field(() => Int)
   divisionId: number;
 
-  @Field(() => Boolean, { defaultValue: false })
-  isAdmin: boolean;
+  @Field(() => [UserDivisionInput])
+  userData: UserDivisionInput[];
 }

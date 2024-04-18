@@ -13,5 +13,6 @@ import { Division } from '../divisions/entities/division.entity';
     TypeOrmModule.forFeature([Division]),
   ],
   providers: [UserDivisionsResolver, UserDivisionsService],
+  exports: [UserDivisionsService],
 })
 export class UserDivisionsModule {}

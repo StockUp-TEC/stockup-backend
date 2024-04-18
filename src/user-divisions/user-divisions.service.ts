@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { Division } from '../divisions/entities/division.entity';
 import { CreateUserDivisionInput } from './dto/create-user-division.input';
-import { UpdateUserDivisionInput } from './dto/update-user-division.input';
 
 @Injectable()
 export class UserDivisionsService {
@@ -18,10 +17,12 @@ export class UserDivisionsService {
     private divisionRepository: Repository<Division>,
   ) {}
 
-  async validateUserAndDivision(userId: number, divisionId: number) {
-    const userExists = await this.userRepository.findOneBy({ id: userId });
-    if (!userExists) {
-      throw new NotFoundException(`User with ID ${userId} not found.`);
+  async validateUsersAndDivision(userIds: number[], divisionId: number) {
+    for (const userId of userIds) {
+      const userExists = await this.userRepository.findOneBy({ id: userId });
+      if (!userExists) {
+        throw new NotFoundException(`User with ID ${userId} not found.`);
+      }
     }
 
     const divisionExists = await this.divisionRepository.findOneBy({
@@ -32,51 +33,50 @@ export class UserDivisionsService {
     }
   }
 
-  async assignUserToDivision(input: CreateUserDivisionInput) {
-    await this.validateUserAndDivision(input.userId, input.divisionId);
-    const userDivision = await this.userDivisionRepository.findOne({
-      where: { userId: input.userId, divisionId: input.divisionId },
-    });
+  async assignUsersToDivision(input: CreateUserDivisionInput) {
+    await this.validateUsersAndDivision(
+      input.userData.map((u) => u.userId),
+      input.divisionId,
+    );
 
-    if (userDivision) {
-      throw new Error('User is already assigned to this division');
-    }
-
-    const newUserDivision = this.userDivisionRepository.create({
-      userId: input.userId,
-      divisionId: input.divisionId,
-      isAdmin: input.isAdmin,
-    });
-
-    await this.userDivisionRepository.save(newUserDivision);
-    return true;
-  }
-
-  async updateUserDivisionAdminStatus(input: UpdateUserDivisionInput) {
-    await this.validateUserAndDivision(input.userId, input.divisionId);
-    const userDivision = await this.userDivisionRepository.findOneOrFail({
-      where: {
-        userId: input.userId,
+    const userDivisions: UserDivision[] = [];
+    for (const user of input.userData) {
+      const newUserDivision = this.userDivisionRepository.create({
+        userId: user.userId,
         divisionId: input.divisionId,
-      },
-    });
-
-    userDivision.isAdmin = input.isAdmin;
-
-    return this.userDivisionRepository.save(userDivision);
-  }
-
-  async removeUserFromDivision(userId: number, divisionId: number) {
-    const result = await this.userDivisionRepository.delete({
-      userId,
-      divisionId,
-    });
-    if (result.affected === 0) {
-      throw new Error('No record found to delete.');
-    } else {
-      return true;
+        isAdmin: user.isAdmin,
+      });
+      userDivisions.push(newUserDivision);
     }
+
+    return this.userDivisionRepository.save(userDivisions);
   }
+
+  // async updateUserDivisionAdminStatus(input: UpdateUserDivisionInput) {
+  //   await this.validateUserAndDivision(input.userId, input.divisionId);
+  //   const userDivision = await this.userDivisionRepository.findOneOrFail({
+  //     where: {
+  //       userId: input.userId,
+  //       divisionId: input.divisionId,
+  //     },
+  //   });
+  //
+  //   userDivision.isAdmin = input.isAdmin;
+  //
+  //   return this.userDivisionRepository.save(userDivision);
+  // }
+  //
+  // async removeUserFromDivision(userId: number, divisionId: number) {
+  //   const result = await this.userDivisionRepository.delete({
+  //     userId,
+  //     divisionId,
+  //   });
+  //   if (result.affected === 0) {
+  //     throw new Error('No record found to delete.');
+  //   } else {
+  //     return true;
+  //   }
+  // }
 
   async listDivisionsForUser(userId: number) {
     return this.userDivisionRepository.find({

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Division } from './entities/division.entity';
 import { Repository } from 'typeorm';
 import { Workspace } from '../workspaces/entities/workspace.entity';
+import { UserDivisionsService } from '../user-divisions/user-divisions.service';
 
 @Injectable()
 export class DivisionsService {
@@ -13,6 +14,7 @@ export class DivisionsService {
     private divisionRepository: Repository<Division>,
     @InjectRepository(Workspace)
     private workspaceRepository: Repository<Workspace>,
+    private readonly userDivisionService: UserDivisionsService,
   ) {}
 
   // create(createDivisionInput: CreateDivisionInput) {
@@ -60,6 +62,19 @@ export class DivisionsService {
       ...divisionData,
       workspace: workspace,
     });
-    return this.divisionRepository.save(division);
+    await this.divisionRepository.save(division);
+
+    await this.userDivisionService.assignUsersToDivision({
+      divisionId: division.id,
+      userData: divisionData.userDivisions,
+    });
+
+    return await this.divisionRepository.findOne({
+      where: { id: division.id },
+      relations: {
+        workspace: true,
+        userDivisions: true,
+      },
+    });
   }
 }

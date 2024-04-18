@@ -1,4 +1,5 @@
 import { InputType, Field, ID } from '@nestjs/graphql';
+import { UserDivisionInput } from '../../user-divisions/dto/user-division.input';
 
 @InputType()
 export class CreateDivisionInput {
@@ -10,4 +11,7 @@ export class CreateDivisionInput {
 
   @Field(() => ID)
   public workspaceId: number;
+
+  @Field(() => [UserDivisionInput])
+  public userDivisions: UserDivisionInput[];
 }

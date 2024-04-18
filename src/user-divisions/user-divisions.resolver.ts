@@ -8,33 +8,33 @@ import { UpdateUserDivisionInput } from './dto/update-user-division.input';
 export class UserDivisionsResolver {
   constructor(private readonly userDivisionService: UserDivisionsService) {}
 
-  @Mutation(() => UserDivision)
-  assignUserToDivision(
-    @Args('createUserDivisionInput')
-    createUserDivisionInput: CreateUserDivisionInput,
-  ) {
-    return this.userDivisionService.assignUserToDivision(
-      createUserDivisionInput,
-    );
-  }
+  // @Mutation(() => UserDivision)
+  // assignUserToDivision(
+  //   @Args('createUserDivisionInput')
+  //   createUserDivisionInput: CreateUserDivisionInput,
+  // ) {
+  //   return this.userDivisionService.assignUsersToDivision(
+  //     createUserDivisionInput,
+  //   );
+  // }
 
-  @Mutation(() => UserDivision)
-  updateUserDivisionAdminStatus(
-    @Args('updateUserDivisionInput')
-    updateUserDivisionInput: UpdateUserDivisionInput,
-  ): Promise<UserDivision> {
-    return this.userDivisionService.updateUserDivisionAdminStatus(
-      updateUserDivisionInput,
-    );
-  }
+  // @Mutation(() => UserDivision)
+  // updateUserDivisionAdminStatus(
+  //   @Args('updateUserDivisionInput')
+  //   updateUserDivisionInput: UpdateUserDivisionInput,
+  // ): Promise<UserDivision> {
+  //   return this.userDivisionService.updateUserDivisionAdminStatus(
+  //     updateUserDivisionInput,
+  //   );
+  // }
 
-  @Mutation(() => Boolean)
-  removeUserFromDivision(
-    @Args('userId', { type: () => Int }) userId: number,
-    @Args('divisionId', { type: () => Int }) divisionId: number,
-  ) {
-    return this.userDivisionService.removeUserFromDivision(userId, divisionId);
-  }
+  // @Mutation(() => Boolean)
+  // removeUserFromDivision(
+  //   @Args('userId', { type: () => Int }) userId: number,
+  //   @Args('divisionId', { type: () => Int }) divisionId: number,
+  // ) {
+  //   return this.userDivisionService.removeUserFromDivision(userId, divisionId);
+  // }
 
   @Query(() => [UserDivision])
   listDivisionsForUser(@Args('userId', { type: () => Int }) userId: number) {
