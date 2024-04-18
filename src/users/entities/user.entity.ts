@@ -9,6 +9,7 @@ import { Workspace } from '../../workspaces/entities/workspace.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { UserDivision } from '../../user-divisions/entities/user-division.entity';
 import { Company } from '../../companies/entities/company.entity';
+import { Role } from '../../roles/entities/role.entity';
 
 @Entity({ name: 'USER' })
 @ObjectType()
@@ -25,6 +26,10 @@ export class User {
   @Field(() => String)
   name: string;
 
+  @Column({ type: 'varchar2', name: 'STUDENT_ID' })
+  @Field(() => String)
+  studentId: string;
+
   @Column({ type: 'varchar2', name: 'AUTH_PROVIDER_ID' })
   authProviderId: string;
 
@@ -37,4 +42,7 @@ export class User {
 
   @ManyToMany(() => Company, (company) => company.users)
   companies: Company[];
+
+  @ManyToMany(() => Role, (role) => role.users)
+  roles: Role[];
 }

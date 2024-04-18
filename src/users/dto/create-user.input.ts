@@ -8,5 +8,11 @@ export class CreateUserInput {
   name: string;
 
   @Field()
-  authProviderId: string;
+  studentId: string;
+
+  @Field()
+  roleId: number;
+
+  @Field()
+  workspaceId: number;
 }
