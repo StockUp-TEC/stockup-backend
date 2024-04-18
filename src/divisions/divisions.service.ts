@@ -45,6 +45,7 @@ export class DivisionsService {
   }
 
   async remove(id: number) {
+    await this.userDivisionService.deleteAllUsersForDivision(id);
     const result = await this.divisionRepository.delete(id);
     return result.affected > 0;
   }

@@ -78,6 +78,11 @@ export class UserDivisionsService {
   //   }
   // }
 
+  async deleteAllUsersForDivision(divisionId: number) {
+    const result = await this.userDivisionRepository.delete({ divisionId });
+    return result.affected > 0;
+  }
+
   async listDivisionsForUser(userId: number) {
     return this.userDivisionRepository.find({
       where: { userId },
