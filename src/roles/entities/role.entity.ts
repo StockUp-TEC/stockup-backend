@@ -46,6 +46,6 @@ export class Role {
     joinColumn: { name: 'ROLE_ID', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'USER_ID', referencedColumnName: 'id' },
   })
-  @Field(() => [User])
+  @Field(() => [User], { nullable: true })
   users: User[];
 }
