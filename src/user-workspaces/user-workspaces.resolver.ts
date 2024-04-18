@@ -8,34 +8,44 @@ import { UpdateUserWorkspaceInput } from './dto/update-user-workspace.input';
 export class UserWorkspacesResolver {
   constructor(private readonly userWorkspacesService: UserWorkspacesService) {}
 
+  // @Mutation(() => UserWorkspace)
+  // addUserToWorkspace(
+  //   @Args('createUserWorkspaceInput')
+  //   createUserWorkspaceInput: CreateUserWorkspaceInput,
+  // ) {
+  //   return this.userWorkspacesService.addUserToWorkspace(
+  //     createUserWorkspaceInput,
+  //   );
+  // }
+
   @Mutation(() => UserWorkspace)
-  addUserToWorkspace(
+  assignUsersToWorkspace(
     @Args('createUserWorkspaceInput')
     createUserWorkspaceInput: CreateUserWorkspaceInput,
   ) {
-    return this.userWorkspacesService.addUserToWorkspace(
+    return this.userWorkspacesService.assignUsersToWorkspace(
       createUserWorkspaceInput,
     );
   }
 
-  @Mutation(() => UserWorkspace)
-  updateUserWorkspace(
-    @Args('updateUserWorkspaceInput')
-    updateUserWorkspaceInput: UpdateUserWorkspaceInput,
-  ) {
-    return this.userWorkspacesService.updateUserWorkspaceRole(
-      updateUserWorkspaceInput,
-    );
-  }
-
-  @Mutation(() => UserWorkspace)
-  removeUserWorkspace(
-    @Args('userId', { type: () => Int }) userId: number,
-    @Args('workspaceId', { type: () => Int }) workspaceId: number,
-  ) {
-    return this.userWorkspacesService.removeUserFromWorkspace(
-      userId,
-      workspaceId,
-    );
-  }
+  // @Mutation(() => UserWorkspace)
+  // updateUserWorkspace(
+  //   @Args('updateUserWorkspaceInput')
+  //   updateUserWorkspaceInput: UpdateUserWorkspaceInput,
+  // ) {
+  //   return this.userWorkspacesService.updateUserWorkspaceRole(
+  //     updateUserWorkspaceInput,
+  //   );
+  // }
+  //
+  // @Mutation(() => UserWorkspace)
+  // removeUserWorkspace(
+  //   @Args('userId', { type: () => Int }) userId: number,
+  //   @Args('workspaceId', { type: () => Int }) workspaceId: number,
+  // ) {
+  //   return this.userWorkspacesService.removeUserFromWorkspace(
+  //     userId,
+  //     workspaceId,
+  //   );
+  // }
 }

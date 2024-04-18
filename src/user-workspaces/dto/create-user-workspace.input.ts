@@ -1,13 +1,11 @@
 import { InputType, Int, Field, ID } from '@nestjs/graphql';
+import { UserWorkspaceInput } from './user-workspace.input';
 
 @InputType()
 export class CreateUserWorkspaceInput {
-  @Field(() => Int)
-  userId: number;
-
-  @Field(() => Int)
+  @Field(() => ID)
   workspaceId: number;
 
-  @Field(() => ID)
-  roleId: number;
+  @Field(() => [UserWorkspaceInput])
+  userData: UserWorkspaceInput[];
 }

@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserWorkspaceInput } from './dto/create-user-workspace.input';
-import { UpdateUserWorkspaceInput } from './dto/update-user-workspace.input';
 import { UserWorkspace } from './entities/user-workspace.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,10 +17,12 @@ export class UserWorkspacesService {
     private workspaceRepository: Repository<Workspace>,
   ) {}
 
-  async validateUserAndWorkspace(userId: number, workspaceId: number) {
-    const userExists = await this.userRepository.findOneBy({ id: userId });
-    if (!userExists) {
-      throw new NotFoundException(`User with ID ${userId} not found.`);
+  async validateUsersAndWorkspace(userIds: number[], workspaceId: number) {
+    for (const userId of userIds) {
+      const userExists = await this.userRepository.findOneBy({ id: userId });
+      if (!userExists) {
+        throw new NotFoundException(`User with ID ${userId} not found.`);
+      }
     }
 
     const divisionExists = await this.workspaceRepository.findOneBy({
@@ -34,47 +35,81 @@ export class UserWorkspacesService {
     }
   }
 
-  async addUserToWorkspace(input: CreateUserWorkspaceInput) {
-    await this.validateUserAndWorkspace(input.userId, input.workspaceId);
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId: input.userId, workspaceId: input.workspaceId },
-    });
+  // async addUserToWorkspace(input: CreateUserWorkspaceInput) {
+  //   await this.validateUserAndWorkspace(input.userId, input.workspaceId);
+  //   const userWorkspace = await this.userWorkspaceRepository.findOne({
+  //     where: { userId: input.userId, workspaceId: input.workspaceId },
+  //   });
+  //
+  //   if (userWorkspace) {
+  //     throw new Error('User is already assigned to this workspace');
+  //   }
+  //
+  //   const newUserWorkspace = this.userWorkspaceRepository.create({
+  //     userId: input.userId,
+  //     workspaceId: input.workspaceId,
+  //     roleId: input.roleId,
+  //   });
+  //
+  //   return this.userWorkspaceRepository.save(newUserWorkspace);
+  // }
 
-    if (userWorkspace) {
-      throw new Error('User is already assigned to this workspace');
-    }
+  async assignUsersToWorkspace(input: CreateUserWorkspaceInput) {
+    await this.validateUsersAndWorkspace(
+      input.userData.map((u) => u.userId),
+      input.workspaceId,
+    );
 
-    const newUserWorkspace = this.userWorkspaceRepository.create({
-      userId: input.userId,
-      workspaceId: input.workspaceId,
-      roleId: input.roleId,
-    });
-
-    return this.userWorkspaceRepository.save(newUserWorkspace);
-  }
-
-  async updateUserWorkspaceRole(input: UpdateUserWorkspaceInput) {
-    await this.validateUserAndWorkspace(input.userId, input.workspaceId);
-    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+    const existingUserWorkspaces = await this.userWorkspaceRepository.find({
       where: {
-        userId: input.userId,
         workspaceId: input.workspaceId,
       },
     });
 
-    userWorkspace.roleId = input.roleId;
-    return this.userWorkspaceRepository.save(userWorkspace);
+    const userWorkspaces: UserWorkspace[] = [];
+    for (const user of input.userData) {
+      const newUserWorkspace = this.userWorkspaceRepository.create({
+        userId: user.userId,
+        workspaceId: input.workspaceId,
+        roleId: user.roleId,
+      });
+      userWorkspaces.push(newUserWorkspace);
+    }
+
+    const oldUserWorkspaces = existingUserWorkspaces.filter(
+      (existingUserWorkspace) =>
+        !userWorkspaces.find(
+          (newUserWorkspace) =>
+            newUserWorkspace.userId === existingUserWorkspace.userId,
+        ),
+    );
+    await this.userWorkspaceRepository.remove(oldUserWorkspaces);
+
+    return this.userWorkspaceRepository.save(userWorkspaces);
   }
 
-  async removeUserFromWorkspace(userId: number, workspaceId: number) {
-    await this.validateUserAndWorkspace(userId, workspaceId);
-    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
-      where: {
-        userId,
-        workspaceId,
-      },
-    });
-
-    return this.userWorkspaceRepository.remove(userWorkspace);
-  }
+  // async updateUserWorkspaceRole(input: UpdateUserWorkspaceInput) {
+  //   await this.validateUserAndWorkspace(input.userId, input.workspaceId);
+  //   const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+  //     where: {
+  //       userId: input.userId,
+  //       workspaceId: input.workspaceId,
+  //     },
+  //   });
+  //
+  //   userWorkspace.roleId = input.roleId;
+  //   return this.userWorkspaceRepository.save(userWorkspace);
+  // }
+  //
+  // async removeUserFromWorkspace(userId: number, workspaceId: number) {
+  //   await this.validateUserAndWorkspace(userId, workspaceId);
+  //   const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+  //     where: {
+  //       userId,
+  //       workspaceId,
+  //     },
+  //   });
+  //
+  //   return this.userWorkspaceRepository.remove(userWorkspace);
+  // }
 }
