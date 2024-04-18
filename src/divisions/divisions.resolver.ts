@@ -35,7 +35,7 @@ export class DivisionsResolver {
     );
   }
 
-  @Mutation(() => Division)
+  @Mutation(() => Boolean)
   removeDivision(@Args('id', { type: () => Int }) id: number) {
     return this.divisionsService.remove(id);
   }

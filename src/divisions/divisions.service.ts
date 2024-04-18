@@ -44,8 +44,9 @@ export class DivisionsService {
     return `This action updates a #${id} division`;
   }
 
-  remove(id: number) {
-    return this.divisionRepository.delete(id);
+  async remove(id: number) {
+    const result = await this.divisionRepository.delete(id);
+    return result.affected > 0;
   }
 
   async addDivisionToWorkspace(
