@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Workspace } from '../workspaces/entities/workspace.entity';
 import { User } from '../users/entities/user.entity';
+import { Role } from '../roles/entities/role.entity';
 
 @Injectable()
 export class UserWorkspacesService {
@@ -15,6 +16,8 @@ export class UserWorkspacesService {
     private userRepository: Repository<User>,
     @InjectRepository(Workspace)
     private workspaceRepository: Repository<Workspace>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
   ) {}
 
   async validateUsersAndWorkspace(userIds: number[], workspaceId: number) {
@@ -36,7 +39,7 @@ export class UserWorkspacesService {
   }
 
   // async addUserToWorkspace(input: CreateUserWorkspaceInput) {
-  //   await this.validateUserAndWorkspace(input.userId, input.workspaceId);
+  //   await this.validateUsersAndWorkspace(input.userId, input.workspaceId);
   //   const userWorkspace = await this.userWorkspaceRepository.findOne({
   //     where: { userId: input.userId, workspaceId: input.workspaceId },
   //   });
@@ -68,6 +71,17 @@ export class UserWorkspacesService {
 
     const userWorkspaces: UserWorkspace[] = [];
     for (const user of input.userData) {
+      // Check if role belongs to workspace
+      const role = await this.roleRepository.findOneBy({ id: user.roleId });
+      if (!role) {
+        throw new NotFoundException(`Role with ID ${user.roleId} not found.`);
+      }
+      if (role.workspaceId !== input.workspaceId) {
+        throw new NotFoundException(
+          `Role with ID ${user.roleId} does not belong to workspace with ID ${input.workspaceId}.`,
+        );
+      }
+
       const newUserWorkspace = this.userWorkspaceRepository.create({
         userId: user.userId,
         workspaceId: input.workspaceId,

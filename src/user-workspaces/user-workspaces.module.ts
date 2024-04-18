@@ -5,13 +5,10 @@ import { UserWorkspace } from './entities/user-workspace.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { Workspace } from '../workspaces/entities/workspace.entity';
+import { Role } from '../roles/entities/role.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([UserWorkspace]),
-    TypeOrmModule.forFeature([User]),
-    TypeOrmModule.forFeature([Workspace]),
-  ],
+  imports: [TypeOrmModule.forFeature([UserWorkspace, User, Workspace, Role])],
   providers: [UserWorkspacesResolver, UserWorkspacesService],
 })
 export class UserWorkspacesModule {}
