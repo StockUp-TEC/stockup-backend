@@ -43,7 +43,7 @@ export class CompaniesService {
     if (result.affected === 0) {
       throw new Error(`Company with id ${id} not found`);
     }
-    return this.findOne(id);
+    return true;
   }
 
   async remove(id: number) {
