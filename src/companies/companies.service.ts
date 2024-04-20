@@ -38,12 +38,20 @@ export class CompaniesService {
     });
   }
 
-  update(id: number, updateCompanyInput: UpdateCompanyInput) {
-    return `This action updates a #${id} company`;
+  async update(id: number, updateCompanyInput: UpdateCompanyInput) {
+    const result = await this.companyRepository.update(id, updateCompanyInput);
+    if (result.affected === 0) {
+      throw new Error(`Company with id ${id} not found`);
+    }
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} company`;
+  async remove(id: number) {
+    const result = await this.companyRepository.delete(id);
+    if (result.affected === 0) {
+      throw new Error(`Company with id ${id} not found`);
+    }
+    return true;
   }
 
   async addUserToCompany(userId: number, companyId: number) {
