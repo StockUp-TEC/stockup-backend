@@ -9,7 +9,7 @@ import { Workspace } from '../../workspaces/entities/workspace.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { UserDivision } from '../../user-divisions/entities/user-division.entity';
 import { Company } from '../../companies/entities/company.entity';
-import { Role } from '../../roles/entities/role.entity';
+import { UserWorkspace } from '../../user-workspaces/entities/user-workspace.entity';
 
 @Entity({ name: 'USER' })
 @ObjectType()
@@ -43,6 +43,9 @@ export class User {
   @ManyToMany(() => Company, (company) => company.users)
   companies: Company[];
 
-  @ManyToMany(() => Role, (role) => role.users)
-  roles: Role[];
+  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user, {
+    eager: true,
+  })
+  @Field(() => [UserWorkspace], { defaultValue: [] })
+  userWorkspaces: UserWorkspace[];
 }

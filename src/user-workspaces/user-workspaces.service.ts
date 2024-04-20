@@ -76,11 +76,6 @@ export class UserWorkspacesService {
       if (!role) {
         throw new NotFoundException(`Role with ID ${user.roleId} not found.`);
       }
-      if (role.workspaceId !== input.workspaceId) {
-        throw new NotFoundException(
-          `Role with ID ${user.roleId} does not belong to workspace with ID ${input.workspaceId}.`,
-        );
-      }
 
       const newUserWorkspace = this.userWorkspaceRepository.create({
         userId: user.userId,

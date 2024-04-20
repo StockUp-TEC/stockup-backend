@@ -8,7 +8,6 @@ import { Role } from '../../roles/entities/role.entity';
 @ObjectType()
 export class UserWorkspace {
   @PrimaryColumn({ name: 'USER_ID' })
-  @Field(() => ID)
   userId: number;
 
   @PrimaryColumn({ name: 'WORKSPACE_ID' })
@@ -16,18 +15,18 @@ export class UserWorkspace {
   workspaceId: number;
 
   @Column({ name: 'ROLE_ID' })
-  @Field(() => ID)
   roleId: number;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'USER_ID' })
   user: User;
 
-  @ManyToOne(() => Workspace)
+  @ManyToOne(() => Workspace, (workspace) => workspace.userWorkspaces)
   @JoinColumn({ name: 'WORKSPACE_ID' })
   workspace: Workspace;
 
-  @ManyToOne(() => Role)
+  @ManyToOne(() => Role, { eager: true })
   @JoinColumn({ name: 'ROLE_ID' })
+  @Field(() => Role, { nullable: true })
   role: Role;
 }

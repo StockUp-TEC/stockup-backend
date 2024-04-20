@@ -60,14 +60,12 @@ export class UsersService {
   async findAll(first?: number) {
     return await this.userRepository.find({
       take: first,
-      relations: ['workspaces'],
     });
   }
 
   async findOne(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['workspaces'],
     });
     if (!user) {
       throw new Error('User not found');
@@ -90,7 +88,6 @@ export class UsersService {
   async me(authId: string) {
     const user = await this.userRepository.findOne({
       where: { authProviderId: authId },
-      relations: ['workspaces'],
     });
     if (!user) {
       throw new Error('User not found');

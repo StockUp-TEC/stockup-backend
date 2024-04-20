@@ -26,6 +26,12 @@ export class WorkspacesService {
     if (!workspace) {
       throw new Error('Workspace not found');
     }
+    workspace.users = workspace.users.map((user) => {
+      user.userWorkspaces = user.userWorkspaces.filter(
+        (userWorkspace) => userWorkspace.workspaceId === id,
+      );
+      return user;
+    });
     return workspace;
   }
 

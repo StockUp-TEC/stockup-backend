@@ -12,8 +12,6 @@ import { WorkspacesModule } from './workspaces/workspaces.module';
 import { CompaniesModule } from './companies/companies.module';
 import { MailersendModule } from './mailersend/mailersend.module';
 import { RolesModule } from './roles/roles.module';
-import { PermissionsModule } from './permissions/permissions.module';
-import { PermissionGroupsModule } from './permission-groups/permission-groups.module';
 import { UserDivisionsModule } from './user-divisions/user-divisions.module';
 import { UserWorkspacesModule } from './user-workspaces/user-workspaces.module';
 import { AuthModule } from './auth/auth.module';
@@ -43,8 +41,6 @@ import { AuthModule } from './auth/auth.module';
     CompaniesModule,
     MailersendModule,
     RolesModule,
-    PermissionsModule,
-    PermissionGroupsModule,
     UserDivisionsModule,
     UserWorkspacesModule,
     AuthModule,
