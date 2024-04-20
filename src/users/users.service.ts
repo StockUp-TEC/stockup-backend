@@ -60,12 +60,24 @@ export class UsersService {
   async findAll(first?: number) {
     return await this.userRepository.find({
       take: first,
+      relations: {
+        workspaces: true,
+        companies: true,
+        userWorkspaces: true,
+        userDivisions: true,
+      },
     });
   }
 
   async findOne(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
+      relations: {
+        workspaces: true,
+        companies: true,
+        userWorkspaces: true,
+        userDivisions: true,
+      },
     });
     if (!user) {
       throw new Error('User not found');
@@ -77,6 +89,12 @@ export class UsersService {
   async findUserByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },
+      relations: {
+        workspaces: true,
+        companies: true,
+        userWorkspaces: true,
+        userDivisions: true,
+      },
     });
     if (!user) {
       throw new Error('User not found');
