@@ -39,19 +39,19 @@ export class WorkspacesResolver {
     return this.workspacesService.remove(id);
   }
 
-  @Mutation(() => Workspace)
-  addUsers(
-    @Args('id', { type: () => Int }) id: number,
-    @Args('userIds', { type: () => [Int] }) userIds: number[],
-  ) {
-    return this.workspacesService.addUsers(id, userIds);
-  }
-
   @Mutation(() => Boolean)
   async addCompaniesToWorkspace(
     @Args('workspaceId', { type: () => Int }) id: number,
     @Args('companyIds', { type: () => [Int] }) companyIds: number[],
   ) {
     return this.workspacesService.addCompaniesToWorkspace(id, companyIds);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteUserFromWorkspace(
+    @Args('workspaceId', { type: () => Int }) workspaceId: number,
+    @Args('userId', { type: () => Int }) userId: number,
+  ) {
+    return this.workspacesService.deleteUserFromWorkspace(workspaceId, userId);
   }
 }

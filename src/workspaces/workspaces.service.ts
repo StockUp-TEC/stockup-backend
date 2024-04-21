@@ -38,14 +38,6 @@ export class WorkspacesService {
     return this.workspaceRepository.delete(id);
   }
 
-  addUsers(id: number, userIds: number[]) {
-    return this.workspaceRepository
-      .createQueryBuilder()
-      .relation(Workspace, 'users')
-      .of(id)
-      .add(userIds);
-  }
-
   async addCompaniesToWorkspace(id: number, companyIds: number[]) {
     await this.workspaceRepository
       .createQueryBuilder()
@@ -53,5 +45,13 @@ export class WorkspacesService {
       .of(id)
       .add(companyIds);
     return true;
+  }
+
+  async deleteUserFromWorkspace(workspaceId: number, userId: number) {
+    return this.workspaceRepository
+      .createQueryBuilder()
+      .relation(Workspace, 'users')
+      .of(workspaceId)
+      .remove(userId);
   }
 }
