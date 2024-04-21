@@ -43,9 +43,7 @@ export class User {
   @ManyToMany(() => Company, (company) => company.users)
   companies: Company[];
 
-  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user, {
-    eager: true,
-  })
+  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
   @Field(() => [UserWorkspace], { defaultValue: [] })
   userWorkspaces: UserWorkspace[];
 }

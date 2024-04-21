@@ -24,12 +24,21 @@ export class RolesService {
     return await this.roleRepository.save(role);
   }
 
-  findAll() {
-    return this.roleRepository.find();
+  async findAll() {
+    return await this.roleRepository.find({
+      relations: {
+        userWorkspaces: true,
+      },
+    });
   }
 
   findOne(id: number) {
-    return this.roleRepository.findOneBy({ id });
+    return this.roleRepository.findOne({
+      where: { id },
+      relations: {
+        userWorkspaces: true,
+      },
+    });
   }
 
   async remove(id: number) {

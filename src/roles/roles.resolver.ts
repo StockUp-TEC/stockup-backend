@@ -35,4 +35,21 @@ export class RolesResolver {
   removeRole(@Args('id', { type: () => Int }) id: number) {
     return this.rolesService.remove(id);
   }
+
+  @ResolveField(() => [User], { name: 'users' })
+  async users(
+    @Parent() role: Role,
+    @Args('workspaceId', { type: () => Int, nullable: true })
+    workspaceId?: number,
+  ) {
+    let userWorkspaces = role.userWorkspaces;
+    if (workspaceId) {
+      userWorkspaces = userWorkspaces.filter(
+        (userWorkspace) => userWorkspace.workspaceId === workspaceId,
+      );
+    }
+    const users = userWorkspaces.map((userWorkspace) => userWorkspace.user);
+
+    return users;
+  }
 }

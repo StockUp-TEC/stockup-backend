@@ -1,5 +1,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UserWorkspace } from '../../user-workspaces/entities/user-workspace.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('ROLE')
 @ObjectType()
@@ -18,4 +20,10 @@ export class Role {
 
   @Column({ name: 'AUTH0_ROLE_ID' })
   auth0RoleId: string;
+
+  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.role)
+  userWorkspaces: UserWorkspace[];
+
+  @Field(() => [User], { defaultValue: [] })
+  users: User[];
 }

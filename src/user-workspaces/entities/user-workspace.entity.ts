@@ -17,7 +17,7 @@ export class UserWorkspace {
   @Column({ name: 'ROLE_ID' })
   roleId: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.userWorkspaces, { eager: true })
   @JoinColumn({ name: 'USER_ID' })
   user: User;
 
