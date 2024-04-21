@@ -64,4 +64,18 @@ export class UsersResolver {
     }
     return this.usersService.me(authId);
   }
+
+  @ResolveField(() => Role, { name: 'role', nullable: true })
+  async role(
+    @Parent() user: User,
+    @Args('workspaceId', { type: () => Int }) workspaceId: number,
+  ) {
+    const userWorkspace = user.userWorkspaces.find(
+      (userWorkspace) => userWorkspace.workspaceId === workspaceId,
+    );
+    if (!userWorkspace) {
+      return null;
+    }
+    return userWorkspace.role;
+  }
 }

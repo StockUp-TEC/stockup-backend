@@ -1,11 +1,11 @@
 import {
-  Resolver,
-  Query,
-  Mutation,
   Args,
   Int,
-  ResolveField,
+  Mutation,
   Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 import { RolesService } from './roles.service';
 import { Role } from './entities/role.entity';
@@ -48,8 +48,6 @@ export class RolesResolver {
         (userWorkspace) => userWorkspace.workspaceId === workspaceId,
       );
     }
-    const users = userWorkspaces.map((userWorkspace) => userWorkspace.user);
-
-    return users;
+    return userWorkspaces.map((userWorkspace) => userWorkspace.user);
   }
 }
