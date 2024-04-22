@@ -9,6 +9,7 @@ import { Role } from '../roles/entities/role.entity';
 import { UserWorkspace } from '../user-workspaces/entities/user-workspace.entity';
 import { CreateSponsorInput } from './dto/create-sponsor.input';
 import { Company } from '../companies/entities/company.entity';
+import { MailersendService } from '../mailersend/mailersend.service';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +24,7 @@ export class UsersService {
     private userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
+    private readonly mailersendService: MailersendService,
   ) {}
 
   async create(createUserInput: CreateUserInput) {
@@ -60,6 +62,13 @@ export class UsersService {
       role: role,
     });
     await this.userWorkspaceRepository.save(userWorkspace);
+
+    // Send welcome email
+    await this.mailersendService.sendWelcomeEmail(
+      email,
+      workspace.name,
+      role.name === 'Patrocinador',
+    );
 
     return this.userRepository.findOne({
       where: { id: user.id },
@@ -112,6 +121,13 @@ export class UsersService {
     // Create and save the UserCompany entry
     user.companies = [company];
     await this.userRepository.save(user);
+
+    // Send welcome email
+    await this.mailersendService.sendWelcomeEmail(
+      email,
+      workspace.name,
+      role.name === 'Patrocinador',
+    );
 
     return this.userRepository.findOne({
       where: { id: user.id },

@@ -19,10 +19,4 @@ export class SendEmailInput {
 
   @Field(() => String)
   template_id: string;
-
-  @Field(() => String)
-  text: string;
-
-  @Field(() => String)
-  html: string;
 }

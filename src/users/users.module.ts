@@ -7,10 +7,12 @@ import { Workspace } from '../workspaces/entities/workspace.entity';
 import { Role } from '../roles/entities/role.entity';
 import { UserWorkspace } from '../user-workspaces/entities/user-workspace.entity';
 import { Company } from '../companies/entities/company.entity';
+import { MailersendModule } from '../mailersend/mailersend.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Workspace, Role, UserWorkspace, Company]),
+    MailersendModule,
   ],
   providers: [UsersResolver, UsersService],
 })
