@@ -58,7 +58,7 @@ export class UsersService {
     });
     await this.userWorkspaceRepository.save(userWorkspace);
 
-    return user;
+    return true;
   }
 
   async findAll(first?: number) {
