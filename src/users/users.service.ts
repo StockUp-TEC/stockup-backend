@@ -58,7 +58,15 @@ export class UsersService {
     });
     await this.userWorkspaceRepository.save(userWorkspace);
 
-    return this.userRepository.findOneBy({ id: user.id });
+    return this.userRepository.findOne({
+      where: { id: user.id },
+      relations: {
+        workspaces: true,
+        companies: true,
+        userWorkspaces: true,
+        userDivisions: true,
+      },
+    });
   }
 
   async findAll(first?: number) {
