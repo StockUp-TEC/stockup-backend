@@ -46,12 +46,4 @@ export class WorkspacesResolver {
   ) {
     return this.workspacesService.addCompaniesToWorkspace(id, companyIds);
   }
-
-  @Mutation(() => Boolean)
-  async deleteUserFromWorkspace(
-    @Args('workspaceId', { type: () => Int }) workspaceId: number,
-    @Args('userId', { type: () => Int }) userId: number,
-  ) {
-    return this.workspacesService.deleteUserFromWorkspace(workspaceId, userId);
-  }
 }

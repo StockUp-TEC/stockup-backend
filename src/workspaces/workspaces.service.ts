@@ -46,12 +46,4 @@ export class WorkspacesService {
       .add(companyIds);
     return true;
   }
-
-  async deleteUserFromWorkspace(workspaceId: number, userId: number) {
-    return this.workspaceRepository
-      .createQueryBuilder()
-      .relation(Workspace, 'users')
-      .of(workspaceId)
-      .remove(userId);
-  }
 }
