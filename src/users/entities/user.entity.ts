@@ -27,10 +27,6 @@ export class User {
   @Field(() => String, { nullable: true })
   name: string;
 
-  @Column({ type: 'varchar2', name: 'STUDENT_ID' })
-  @Field(() => String)
-  studentId: string;
-
   @Column({ type: 'varchar2', name: 'AUTH_PROVIDER_ID' })
   authProviderId: string;
 

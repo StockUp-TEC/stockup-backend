@@ -5,9 +5,6 @@ export class CreateUserInput {
   email: string;
 
   @Field()
-  studentId: string;
-
-  @Field()
   roleId: number;
 
   @Field()

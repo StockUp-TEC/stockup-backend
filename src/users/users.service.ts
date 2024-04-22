@@ -22,11 +22,7 @@ export class UsersService {
   ) {}
 
   async create(createUserInput: CreateUserInput) {
-    const { email, studentId, roleId, workspaceId } = createUserInput;
-
-    // Create and save the user
-    const user = this.userRepository.create({ email, studentId });
-    await this.userRepository.save(user);
+    const { email, roleId, workspaceId } = createUserInput;
 
     // Find the workspace and role by their IDs
     const workspace = await this.workspaceRepository.findOneBy({
@@ -41,6 +37,14 @@ export class UsersService {
 
     if (!role) {
       throw new Error('Role not found');
+    }
+
+    // Check if the user already exists
+    let user = await this.userRepository.findOneBy({ email });
+
+    if (!user) {
+      user = this.userRepository.create({ email });
+      await this.userRepository.save(user);
     }
 
     // Create and save the UserWorkspace entry
