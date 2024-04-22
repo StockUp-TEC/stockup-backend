@@ -20,7 +20,7 @@ import { Role } from '../roles/entities/role.entity';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Mutation(() => Boolean)
+  @Mutation(() => User)
   addUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
   }

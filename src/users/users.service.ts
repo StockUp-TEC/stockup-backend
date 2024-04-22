@@ -58,7 +58,7 @@ export class UsersService {
     });
     await this.userWorkspaceRepository.save(userWorkspace);
 
-    return true;
+    return this.userRepository.findOneBy({ id: user.id });
   }
 
   async findAll(first?: number) {
