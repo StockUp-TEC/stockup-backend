@@ -15,6 +15,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/gql-auth.guard';
 import { Role } from '../roles/entities/role.entity';
+import { CreateSponsorInput } from './dto/create-sponsor.input';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -23,6 +24,13 @@ export class UsersResolver {
   @Mutation(() => User)
   addUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
+  }
+
+  @Mutation(() => User)
+  addSponsor(
+    @Args('createSponsorInput') createSponsorInput: CreateSponsorInput,
+  ) {
+    return this.usersService.createSponsor(createSponsorInput);
   }
 
   // @UseGuards(GqlAuthGuard)

@@ -6,9 +6,12 @@ import { UsersResolver } from './users.resolver';
 import { Workspace } from '../workspaces/entities/workspace.entity';
 import { Role } from '../roles/entities/role.entity';
 import { UserWorkspace } from '../user-workspaces/entities/user-workspace.entity';
+import { Company } from '../companies/entities/company.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Workspace, Role, UserWorkspace])],
+  imports: [
+    TypeOrmModule.forFeature([User, Workspace, Role, UserWorkspace, Company]),
+  ],
   providers: [UsersResolver, UsersService],
 })
 export class UsersModule {}

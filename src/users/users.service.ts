@@ -7,6 +7,8 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { Workspace } from '../workspaces/entities/workspace.entity';
 import { Role } from '../roles/entities/role.entity';
 import { UserWorkspace } from '../user-workspaces/entities/user-workspace.entity';
+import { CreateSponsorInput } from './dto/create-sponsor.input';
+import { Company } from '../companies/entities/company.entity';
 
 @Injectable()
 export class UsersService {
@@ -19,12 +21,13 @@ export class UsersService {
     private roleRepository: Repository<Role>,
     @InjectRepository(UserWorkspace)
     private userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(Company)
+    private companyRepository: Repository<Company>,
   ) {}
 
   async create(createUserInput: CreateUserInput) {
     const { email, roleId, workspaceId } = createUserInput;
 
-    // Find the workspace and role by their IDs
     const workspace = await this.workspaceRepository.findOneBy({
       id: workspaceId,
     });
@@ -57,6 +60,58 @@ export class UsersService {
       role: role,
     });
     await this.userWorkspaceRepository.save(userWorkspace);
+
+    return this.userRepository.findOne({
+      where: { id: user.id },
+      relations: {
+        workspaces: true,
+        companies: true,
+        userWorkspaces: true,
+        userDivisions: true,
+      },
+    });
+  }
+
+  async createSponsor(createSponsorInput: CreateSponsorInput) {
+    const { email, companyId, workspaceId } = createSponsorInput;
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    const company = await this.companyRepository.findOneBy({ id: companyId });
+
+    if (!company) {
+      throw new Error('Company not found');
+    }
+
+    // Check if the user already exists
+    let user = await this.userRepository.findOneBy({ email });
+
+    if (!user) {
+      user = this.userRepository.create({ email });
+      await this.userRepository.save(user);
+    }
+
+    const role = await this.roleRepository.findOneBy({ name: 'Patrocinador' });
+
+    // Create and save the UserWorkspace entry
+    const userWorkspace = this.userWorkspaceRepository.create({
+      userId: user.id,
+      user: user,
+      workspace: workspace,
+      role: role,
+    });
+
+    await this.userWorkspaceRepository.save(userWorkspace);
+
+    // Create and save the UserCompany entry
+    user.companies = [company];
+    await this.userRepository.save(user);
 
     return this.userRepository.findOne({
       where: { id: user.id },
