@@ -20,7 +20,7 @@ import { Role } from '../roles/entities/role.entity';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Mutation(() => User)
+  @Mutation(() => Boolean)
   addUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
   }
@@ -70,12 +70,12 @@ export class UsersResolver {
     @Parent() user: User,
     @Args('workspaceId', { type: () => Int }) workspaceId: number,
   ) {
+    if (!user.userWorkspaces) {
+      return null;
+    }
     const userWorkspace = user.userWorkspaces.find(
       (userWorkspace) => userWorkspace.workspaceId === workspaceId,
     );
-    if (!userWorkspace) {
-      return null;
-    }
     return userWorkspace.role;
   }
 }
