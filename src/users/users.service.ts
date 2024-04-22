@@ -50,6 +50,12 @@ export class UsersService {
     if (!user) {
       user = this.userRepository.create({ email });
       await this.userRepository.save(user);
+      // Send welcome email
+      await this.mailersendService.sendWelcomeEmail(
+        email,
+        workspace.name,
+        role.name === 'Patrocinador',
+      );
     }
 
     // Create and save the UserWorkspace entry
@@ -62,13 +68,6 @@ export class UsersService {
       role: role,
     });
     await this.userWorkspaceRepository.save(userWorkspace);
-
-    // Send welcome email
-    await this.mailersendService.sendWelcomeEmail(
-      email,
-      workspace.name,
-      role.name === 'Patrocinador',
-    );
 
     return this.userRepository.findOne({
       where: { id: user.id },
@@ -98,15 +97,21 @@ export class UsersService {
       throw new Error('Company not found');
     }
 
+    const role = await this.roleRepository.findOneBy({ name: 'Patrocinador' });
+
     // Check if the user already exists
     let user = await this.userRepository.findOneBy({ email });
 
     if (!user) {
       user = this.userRepository.create({ email });
       await this.userRepository.save(user);
+      // Send welcome email
+      await this.mailersendService.sendWelcomeEmail(
+        email,
+        workspace.name,
+        role.name === 'Patrocinador',
+      );
     }
-
-    const role = await this.roleRepository.findOneBy({ name: 'Patrocinador' });
 
     // Create and save the UserWorkspace entry
     const userWorkspace = this.userWorkspaceRepository.create({
@@ -121,13 +126,6 @@ export class UsersService {
     // Create and save the UserCompany entry
     user.companies = [company];
     await this.userRepository.save(user);
-
-    // Send welcome email
-    await this.mailersendService.sendWelcomeEmail(
-      email,
-      workspace.name,
-      role.name === 'Patrocinador',
-    );
 
     return this.userRepository.findOne({
       where: { id: user.id },
