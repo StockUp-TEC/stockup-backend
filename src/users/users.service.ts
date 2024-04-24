@@ -10,6 +10,7 @@ import { UserWorkspace } from '../user-workspaces/entities/user-workspace.entity
 import { CreateSponsorInput } from './dto/create-sponsor.input';
 import { Company } from '../companies/entities/company.entity';
 import { MailersendService } from '../mailersend/mailersend.service';
+import { UserDivision } from '../user-divisions/entities/user-division.entity';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,8 @@ export class UsersService {
     private userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
+    @InjectRepository(UserDivision)
+    private userDivisionRepository: Repository<UserDivision>,
     private readonly mailersendService: MailersendService,
   ) {}
 
@@ -209,6 +212,19 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    return await this.userRepository.delete(id);
+    // Delete all UserWorkspace entries
+    await this.userWorkspaceRepository.delete({ userId: id });
+
+    // Delete all UserDivision entries
+    await this.userDivisionRepository.delete({ userId: id });
+
+    // Delete the user
+    const result = await this.userRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new Error(`User with id ${id} not found`);
+    }
+
+    return true;
   }
 }

@@ -8,10 +8,18 @@ import { Role } from '../roles/entities/role.entity';
 import { UserWorkspace } from '../user-workspaces/entities/user-workspace.entity';
 import { Company } from '../companies/entities/company.entity';
 import { MailersendModule } from '../mailersend/mailersend.module';
+import { UserDivision } from '../user-divisions/entities/user-division.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Workspace, Role, UserWorkspace, Company]),
+    TypeOrmModule.forFeature([
+      User,
+      Workspace,
+      Role,
+      UserWorkspace,
+      Company,
+      UserDivision,
+    ]),
     MailersendModule,
   ],
   providers: [UsersResolver, UsersService],
