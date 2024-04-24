@@ -1,8 +1,10 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
@@ -33,6 +35,8 @@ export class Company {
   @Field(() => [User], { defaultValue: [] })
   users: User[];
 
-  @ManyToMany(() => Workspace, (workspace) => workspace.companies)
-  workspaces: Workspace[];
+  @ManyToOne(() => Workspace, (workspace) => workspace.companies)
+  @JoinColumn({ name: 'WORKSPACE_ID' })
+  @Field(() => Workspace)
+  workspace: Workspace;
 }

@@ -19,11 +19,21 @@ export class UserWorkspacesResolver {
   // }
 
   @Mutation(() => [UserWorkspace])
-  assignUsersToWorkspace(
+  addUsersToWorkspace(
     @Args('createUserWorkspaceInput')
     createUserWorkspaceInput: CreateUserWorkspaceInput,
   ) {
-    return this.userWorkspacesService.assignUsersToWorkspace(
+    return this.userWorkspacesService.addUsersToWorkspace(
+      createUserWorkspaceInput,
+    );
+  }
+
+  @Mutation(() => [UserWorkspace])
+  setWorkspaceUsers(
+    @Args('createUserWorkspaceInput')
+    createUserWorkspaceInput: CreateUserWorkspaceInput,
+  ) {
+    return this.userWorkspacesService.setWorkspaceUsers(
       createUserWorkspaceInput,
     );
   }

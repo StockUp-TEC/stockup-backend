@@ -44,12 +44,7 @@ export class Workspace {
   @Field(() => [User], { defaultValue: [] })
   users: User[];
 
-  @ManyToMany(() => Company, (company) => company.workspaces, { eager: true })
-  @JoinTable({
-    name: 'WORKSPACE_COMPANY',
-    joinColumn: { name: 'WORKSPACE_ID', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'COMPANY_ID', referencedColumnName: 'id' },
-  })
+  @OneToMany(() => Company, (company) => company.workspace, { eager: true })
   @Field(() => [Company], { defaultValue: [] })
   companies: Company[];
 

@@ -68,7 +68,7 @@ export class UserWorkspacesService {
     return userWorkspaces;
   }
 
-  async assignUsersToWorkspace(input: CreateUserWorkspaceInput) {
+  async setWorkspaceUsers(input: CreateUserWorkspaceInput) {
     await this.validateUsersAndWorkspace(
       input.userData.map((u) => u.userId),
       input.workspaceId,
