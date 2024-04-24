@@ -7,4 +7,7 @@ export class CreateWorkspaceInput {
 
   @Field()
   public description: string;
+
+  @Field()
+  public color: string;
 }

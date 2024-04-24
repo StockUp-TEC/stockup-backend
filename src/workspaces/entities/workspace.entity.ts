@@ -27,6 +27,10 @@ export class Workspace {
   @Field(() => String)
   description: string;
 
+  @Column({ type: 'varchar2', name: 'COLOR' })
+  @Field(() => String)
+  color: string;
+
   @OneToMany(() => Division, (division) => division.workspace, { eager: true })
   @Field(() => [Division], { defaultValue: [] })
   divisions: Division[];
