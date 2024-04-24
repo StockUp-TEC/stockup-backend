@@ -50,12 +50,16 @@ export class UsersService {
     if (!user) {
       user = this.userRepository.create({ email });
       await this.userRepository.save(user);
-      // Send welcome email
-      await this.mailersendService.sendWelcomeEmail(
-        email,
-        workspace.name,
-        role.name === 'Patrocinador',
-      );
+      try {
+        // Send welcome email
+        await this.mailersendService.sendWelcomeEmail(
+          email,
+          workspace.name,
+          role.name === 'Patrocinador',
+        );
+      } catch (error) {
+        console.error('Error sending welcome email', error);
+      }
     }
 
     // Create and save the UserWorkspace entry
@@ -105,12 +109,16 @@ export class UsersService {
     if (!user) {
       user = this.userRepository.create({ email });
       await this.userRepository.save(user);
-      // Send welcome email
-      await this.mailersendService.sendWelcomeEmail(
-        email,
-        workspace.name,
-        role.name === 'Patrocinador',
-      );
+      try {
+        // Send welcome email
+        await this.mailersendService.sendWelcomeEmail(
+          email,
+          workspace.name,
+          role.name === 'Patrocinador',
+        );
+      } catch (error) {
+        console.error('Error sending welcome email', error);
+      }
     }
 
     // Create and save the UserWorkspace entry
