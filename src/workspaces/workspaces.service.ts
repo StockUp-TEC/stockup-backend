@@ -37,13 +37,4 @@ export class WorkspacesService {
   remove(id: number) {
     return this.workspaceRepository.delete(id);
   }
-
-  async addCompaniesToWorkspace(id: number, companyIds: number[]) {
-    await this.workspaceRepository
-      .createQueryBuilder()
-      .relation(Workspace, 'companies')
-      .of(id)
-      .add(companyIds);
-    return true;
-  }
 }

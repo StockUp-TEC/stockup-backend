@@ -26,6 +26,9 @@ export class Company {
   @Field(() => String)
   description: string;
 
+  @Column({ type: 'number', name: 'WORKSPACE_ID' })
+  workspaceId: number;
+
   @ManyToMany(() => User, (user) => user.companies, { eager: true })
   @JoinTable({
     name: 'USER_COMPANY',

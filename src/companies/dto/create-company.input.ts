@@ -7,4 +7,7 @@ export class CreateCompanyInput {
 
   @Field(() => String)
   description: string;
+
+  @Field()
+  workspaceId: number;
 }

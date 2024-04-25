@@ -38,12 +38,4 @@ export class WorkspacesResolver {
   removeWorkspace(@Args('id', { type: () => Int }) id: number) {
     return this.workspacesService.remove(id);
   }
-
-  @Mutation(() => Boolean)
-  async addCompaniesToWorkspace(
-    @Args('workspaceId', { type: () => Int }) id: number,
-    @Args('companyIds', { type: () => [Int] }) companyIds: number[],
-  ) {
-    return this.workspacesService.addCompaniesToWorkspace(id, companyIds);
-  }
 }
