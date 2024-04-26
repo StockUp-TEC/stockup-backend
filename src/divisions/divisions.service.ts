@@ -40,8 +40,12 @@ export class DivisionsService {
     });
   }
 
-  update(id: number, updateDivisionInput: UpdateDivisionInput) {
-    return `This action updates a #${id} division`;
+  async update(id: number, updateDivisionInput: UpdateDivisionInput) {
+    const result = await this.divisionRepository.update(id, {
+      name: updateDivisionInput.name,
+      description: updateDivisionInput.description,
+    });
+    return result.affected > 0;
   }
 
   async remove(id: number) {

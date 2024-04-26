@@ -25,7 +25,7 @@ export class DivisionsResolver {
     return this.divisionsService.findOne(id);
   }
 
-  @Mutation(() => Division)
+  @Mutation(() => Boolean)
   updateDivision(
     @Args('updateDivisionInput') updateDivisionInput: UpdateDivisionInput,
   ) {
