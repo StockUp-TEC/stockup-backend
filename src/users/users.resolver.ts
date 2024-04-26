@@ -52,7 +52,7 @@ export class UsersResolver {
 
   @Mutation(() => Boolean)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.usersService.update(updateUserInput.id, updateUserInput);
+    return this.usersService.update(updateUserInput);
   }
 
   @Mutation(() => Boolean)

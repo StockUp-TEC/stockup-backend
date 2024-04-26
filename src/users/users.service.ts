@@ -213,8 +213,8 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserInput) {
-    const updateInput = { id, ...updateUserDto };
+  async update(updateUserDto: UpdateUserInput) {
+    const { id, ...updateInput } = updateUserDto;
     const result = await this.userRepository.update(id, updateInput);
     if (result.affected === 0) {
       throw new Error(`User with id ${id} not found`);
