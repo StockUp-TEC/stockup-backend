@@ -16,6 +16,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/gql-auth.guard';
 import { Role } from '../roles/entities/role.entity';
 import { CreateSponsorInput } from './dto/create-sponsor.input';
+import { UpdateUserRoleInput } from './dto/update-user-role.input';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -49,8 +50,16 @@ export class UsersResolver {
     return this.usersService.findUserByEmail(email);
   }
 
+  @Mutation(() => Boolean)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.usersService.update(updateUserInput.id, updateUserInput);
+  }
+
+  @Mutation(() => Boolean)
+  updateUserRole(
+    @Args('updateUserRoleInput') updateUserRoleInput: UpdateUserRoleInput,
+  ) {
+    return this.usersService.updateRole(updateUserRoleInput);
   }
 
   @Mutation(() => Boolean)

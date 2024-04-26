@@ -11,6 +11,7 @@ import { CreateSponsorInput } from './dto/create-sponsor.input';
 import { Company } from '../companies/entities/company.entity';
 import { MailersendService } from '../mailersend/mailersend.service';
 import { UserDivision } from '../user-divisions/entities/user-division.entity';
+import { UpdateUserRoleInput } from './dto/update-user-role.input';
 
 @Injectable()
 export class UsersService {
@@ -214,6 +215,44 @@ export class UsersService {
     } else {
       return true;
     }
+  }
+
+  async updateRole(input: UpdateUserRoleInput) {
+    const { id, roleId, workspaceId } = input;
+
+    const user = await this.userRepository.findOneBy({ id });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    const role = await this.roleRepository.findOneBy({ id: roleId });
+
+    if (!role) {
+      throw new Error('Role not found');
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOneBy({
+      userId: id,
+      workspaceId: workspaceId,
+    });
+
+    if (!userWorkspace) {
+      throw new Error('User not found in workspace');
+    }
+
+    userWorkspace.role = role;
+    await this.userWorkspaceRepository.save(userWorkspace);
+
+    return true;
   }
 
   async remove(id: number) {
