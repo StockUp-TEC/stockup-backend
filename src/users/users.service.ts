@@ -199,6 +199,12 @@ export class UsersService {
   async me(authId: string) {
     const user = await this.userRepository.findOne({
       where: { authProviderId: authId },
+      relations: {
+        workspaces: true,
+        companies: true,
+        userWorkspaces: true,
+        userDivisions: true,
+      },
     });
     if (!user) {
       throw new Error('User not found');
