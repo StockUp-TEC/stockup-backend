@@ -33,7 +33,7 @@ export class UserDivisionsService {
     }
   }
 
-  async assignUsersToDivision(input: CreateUserDivisionInput) {
+  async addUsersToDivision(input: CreateUserDivisionInput) {
     await this.validateUsersAndDivision(
       input.userData.map((u) => u.userId),
       input.divisionId,
@@ -50,6 +50,28 @@ export class UserDivisionsService {
     }
 
     return this.userDivisionRepository.save(userDivisions);
+  }
+
+  async setDivisionUsers(input: CreateUserDivisionInput) {
+    await this.validateUsersAndDivision(
+      input.userData.map((u) => u.userId),
+      input.divisionId,
+    );
+
+    await this.userDivisionRepository.delete({ divisionId: input.divisionId });
+
+    const userDivisions: UserDivision[] = [];
+    for (const user of input.userData) {
+      const newUserDivision = this.userDivisionRepository.create({
+        userId: user.userId,
+        divisionId: input.divisionId,
+        isAdmin: user.isAdmin,
+      });
+      userDivisions.push(newUserDivision);
+    }
+
+    await this.userDivisionRepository.save(userDivisions);
+    return true;
   }
 
   // async updateUserDivisionAdminStatus(input: UpdateUserDivisionInput) {

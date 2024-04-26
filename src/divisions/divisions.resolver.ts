@@ -29,10 +29,7 @@ export class DivisionsResolver {
   updateDivision(
     @Args('updateDivisionInput') updateDivisionInput: UpdateDivisionInput,
   ) {
-    return this.divisionsService.update(
-      updateDivisionInput.id,
-      updateDivisionInput,
-    );
+    return this.divisionsService.update(updateDivisionInput);
   }
 
   @Mutation(() => Boolean)

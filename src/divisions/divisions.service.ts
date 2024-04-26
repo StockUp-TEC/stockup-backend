@@ -40,11 +40,14 @@ export class DivisionsService {
     });
   }
 
-  async update(id: number, updateDivisionInput: UpdateDivisionInput) {
-    const result = await this.divisionRepository.update(id, {
-      name: updateDivisionInput.name,
-      description: updateDivisionInput.description,
-    });
+  async update(updateDivisionInput: UpdateDivisionInput) {
+    const { id, ...updateInput } = updateDivisionInput;
+    const division = await this.divisionRepository.findOneBy({ id });
+    if (!division) {
+      throw new Error('Division not found');
+    }
+    const result = await this.divisionRepository.update(id, updateInput);
+
     return result.affected > 0;
   }
 
@@ -70,7 +73,7 @@ export class DivisionsService {
     });
     await this.divisionRepository.save(division);
 
-    await this.userDivisionService.assignUsersToDivision({
+    await this.userDivisionService.addUsersToDivision({
       divisionId: division.id,
       userData: divisionData.userDivisions,
     });

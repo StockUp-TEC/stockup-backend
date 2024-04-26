@@ -47,4 +47,9 @@ export class UserDivisionsResolver {
   ) {
     return this.userDivisionService.listUsersForDivision(divisionId);
   }
+
+  @Mutation(() => Boolean)
+  async setDivisionUsers(@Args('input') input: CreateUserDivisionInput) {
+    return this.userDivisionService.setDivisionUsers(input);
+  }
 }
