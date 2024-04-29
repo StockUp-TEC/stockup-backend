@@ -34,16 +34,15 @@ export class UsersResolver {
     return this.usersService.createSponsor(createSponsorInput);
   }
 
-  // @UseGuards(GqlAuthGuard)
-  @Query(() => [User], { name: 'users' })
-  findAll(@Args('first', { type: () => Int, nullable: true }) first: number) {
-    return this.usersService.findAll(first);
-  }
+  // @Query(() => [User], { name: 'users' })
+  // findAll(@Args('first', { type: () => Int, nullable: true }) first: number) {
+  //   return this.usersService.findAll(first);
+  // }
 
-  @Query(() => User, { name: 'user' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.usersService.findOne(id);
-  }
+  // @Query(() => User, { name: 'user' })
+  // findOne(@Args('id', { type: () => Int }) id: number) {
+  //   return this.usersService.findOne(id);
+  // }
 
   @Query(() => User, { name: 'findUserByEmail' })
   findOneByEmail(@Args('email', { type: () => String }) email: string) {
