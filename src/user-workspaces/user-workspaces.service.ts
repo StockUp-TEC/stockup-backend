@@ -95,10 +95,7 @@ export class UserWorkspacesService {
   }
 
   async removeUsersFromWorkspace(input: DeleteUserWorkspaceInput) {
-    await this.validateUsersAndWorkspace(
-      input.userData.map((u) => u.userId),
-      input.workspaceId,
-    );
+    await this.validateUsersAndWorkspace(input.userIds, input.workspaceId);
 
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
@@ -106,9 +103,8 @@ export class UserWorkspacesService {
       },
     });
 
-    const userIds = input.userData.map((u) => u.userId);
     const usersToRemove = userWorkspaces.filter((uw) =>
-      userIds.includes(uw.userId),
+      input.userIds.includes(uw.userId),
     );
 
     await this.userWorkspaceRepository.remove(usersToRemove);
