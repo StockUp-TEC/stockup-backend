@@ -210,11 +210,12 @@ export class UsersService {
       throw new Error('User not found');
     }
 
-    user.authProviderId = authId;
-    user.name = name;
-    await this.userRepository.save(user);
+    await this.userRepository.update(user.id, {
+      name,
+      authProviderId: authId,
+    });
 
-    return user;
+    return true;
   }
 
   async me(authId: string) {
