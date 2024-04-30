@@ -196,6 +196,27 @@ export class UsersService {
     return user;
   }
 
+  async updateUserAuthData(email: string, name: string, authId: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: {
+        workspaces: true,
+        companies: true,
+        userWorkspaces: true,
+        userDivisions: true,
+      },
+    });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    user.authProviderId = authId;
+    user.name = name;
+    await this.userRepository.save(user);
+
+    return user;
+  }
+
   async me(authId: string) {
     const user = await this.userRepository.findOne({
       where: { authProviderId: authId },

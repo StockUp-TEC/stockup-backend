@@ -12,11 +12,10 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
-import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/gql-auth.guard';
 import { Role } from '../roles/entities/role.entity';
 import { CreateSponsorInput } from './dto/create-sponsor.input';
 import { UpdateUserRoleInput } from './dto/update-user-role.input';
+import { IsPublic } from '../auth/public.decorator';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -49,6 +48,16 @@ export class UsersResolver {
     return this.usersService.findUserByEmail(email);
   }
 
+  @IsPublic()
+  @Mutation(() => Boolean)
+  updateUserAuthData(
+    @Args('email', { type: () => String }) email: string,
+    @Args('name', { type: () => String }) name: string,
+    @Args('authId', { type: () => String }) authId: string,
+  ) {
+    return this.usersService.updateUserAuthData(email, name, authId);
+  }
+
   @Mutation(() => Boolean)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.usersService.update(updateUserInput);
@@ -67,7 +76,6 @@ export class UsersResolver {
   }
 
   // Get authenticated user
-  @UseGuards(GqlAuthGuard)
   @Query(() => User, { name: 'me' })
   async me(@Context() context) {
     const authId = context.req.user.sub;

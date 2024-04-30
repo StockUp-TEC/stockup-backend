@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { GqlAuthGuard } from './auth/gql-auth.guard';
 import * as fs from 'fs';
@@ -13,7 +13,9 @@ async function bootstrap() {
       cert,
     },
   });
-  // app.useGlobalGuards(new GqlAuthGuard());
+
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new GqlAuthGuard(reflector));
 
   app.enableCors();
 
