@@ -10,5 +10,6 @@ import { Role } from '../roles/entities/role.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([UserWorkspace, User, Workspace, Role])],
   providers: [UserWorkspacesResolver, UserWorkspacesService],
+  exports: [UserWorkspacesService],
 })
 export class UserWorkspacesModule {}

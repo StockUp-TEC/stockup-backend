@@ -1,4 +1,4 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Workspace } from './entities/workspace.entity';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceInput } from './dto/create-workspace.input';
@@ -10,9 +10,11 @@ export class WorkspacesResolver {
 
   @Mutation(() => Workspace)
   createWorkspace(
+    @Context() context,
     @Args('createWorkspaceInput') createWorkspaceInput: CreateWorkspaceInput,
   ) {
-    return this.workspacesService.create(createWorkspaceInput);
+    const authId = context.req.user.sub;
+    return this.workspacesService.create(createWorkspaceInput, authId);
   }
   @Query(() => [Workspace], { name: 'workspaces' })
   findAll() {

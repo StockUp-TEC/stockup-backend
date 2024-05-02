@@ -4,15 +4,38 @@ import { UpdateWorkspaceInput } from './dto/update-workspace.input';
 import { Workspace } from './entities/workspace.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserWorkspacesService } from '../user-workspaces/user-workspaces.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class WorkspacesService {
   constructor(
     @InjectRepository(Workspace)
     private workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    private readonly userWorkspaceService: UserWorkspacesService,
   ) {}
-  create(createWorkspaceDto: CreateWorkspaceInput) {
-    return this.workspaceRepository.save(createWorkspaceDto);
+
+  async create(
+    createWorkspaceDto: CreateWorkspaceInput,
+    authProviderId: string,
+  ) {
+    const wksp = await this.workspaceRepository.save(createWorkspaceDto);
+    const user = await this.userRepository.findOne({
+      where: { authProviderId },
+    });
+
+    await this.userWorkspaceService.addUsersToWorkspace({
+      workspaceId: wksp.id,
+      userData: [
+        {
+          userId: user.id,
+          roleId: 1,
+        },
+      ],
+    });
+    return wksp;
   }
 
   async findAll() {
