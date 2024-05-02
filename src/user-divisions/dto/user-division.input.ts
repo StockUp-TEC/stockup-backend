@@ -1,8 +1,8 @@
-import { InputType, Field, ID } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
 export class UserDivisionInput {
-  @Field(() => ID)
+  @Field(() => Int)
   public userId: number;
 
   @Field(() => Boolean)

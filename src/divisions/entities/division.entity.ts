@@ -8,14 +8,14 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { UserDivision } from '../../user-divisions/entities/user-division.entity';
 
 @Entity({ name: 'DIVISION' })
 @ObjectType()
 export class Division {
   @PrimaryGeneratedColumn({ name: 'ID' })
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 
   @Column({ type: 'varchar2', name: 'NAME' })

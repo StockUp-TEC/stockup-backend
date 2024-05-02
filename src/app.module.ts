@@ -15,6 +15,7 @@ import { RolesModule } from './roles/roles.module';
 import { UserDivisionsModule } from './user-divisions/user-divisions.module';
 import { UserWorkspacesModule } from './user-workspaces/user-workspaces.module';
 import { AuthModule } from './auth/auth.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { AuthModule } from './auth/auth.module';
     UserDivisionsModule,
     UserWorkspacesModule,
     AuthModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

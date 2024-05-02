@@ -1,10 +1,10 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class UserWorkspaceInput {
-  @Field(() => ID)
+  @Field(() => Int)
   userId: number;
 
-  @Field(() => ID)
+  @Field(() => Int)
   roleId: number;
 }

@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
@@ -11,7 +11,7 @@ export class UserWorkspace {
   userId: number;
 
   @PrimaryColumn({ name: 'WORKSPACE_ID' })
-  @Field(() => ID)
+  @Field(() => Int)
   workspaceId: number;
 
   @Column({ name: 'ROLE_ID' })

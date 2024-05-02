@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserWorkspace } from '../../user-workspaces/entities/user-workspace.entity';
 import { User } from '../../users/entities/user.entity';
@@ -7,7 +7,7 @@ import { User } from '../../users/entities/user.entity';
 @ObjectType()
 export class Role {
   @PrimaryGeneratedColumn({ name: 'ID' })
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 
   @Column({ name: 'NAME' })

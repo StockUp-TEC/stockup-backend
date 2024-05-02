@@ -1,10 +1,10 @@
-import { InputType, Field, ID } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
 export class DeleteUserWorkspaceInput {
-  @Field(() => ID)
+  @Field(() => Int)
   workspaceId: number;
 
-  @Field(() => [ID])
+  @Field(() => [Int])
   userIds: number[];
 }

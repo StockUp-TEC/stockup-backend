@@ -3,7 +3,7 @@ import { UserWorkspaceInput } from './user-workspace.input';
 
 @InputType()
 export class CreateUserWorkspaceInput {
-  @Field(() => ID)
+  @Field(() => Int)
   workspaceId: number;
 
   @Field(() => [UserWorkspaceInput])

@@ -6,17 +6,16 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { UserDivision } from '../../user-divisions/entities/user-division.entity';
 import { Company } from '../../companies/entities/company.entity';
 import { UserWorkspace } from '../../user-workspaces/entities/user-workspace.entity';
-import { Role } from '../../roles/entities/role.entity';
 
 @Entity({ name: 'USER' })
 @ObjectType()
 export class User {
   @PrimaryGeneratedColumn({ name: 'ID' })
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 
   @Column({ type: 'varchar2', name: 'EMAIL' })

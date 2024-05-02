@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Division } from '../../divisions/entities/division.entity';
 import { User } from '../../users/entities/user.entity';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Company } from '../../companies/entities/company.entity';
 import { UserWorkspace } from '../../user-workspaces/entities/user-workspace.entity';
 
@@ -16,7 +16,7 @@ import { UserWorkspace } from '../../user-workspaces/entities/user-workspace.ent
 @ObjectType()
 export class Workspace {
   @PrimaryGeneratedColumn({ name: 'ID' })
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 
   @Column({ type: 'varchar2', name: 'NAME' })

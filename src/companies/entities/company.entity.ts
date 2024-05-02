@@ -7,7 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { User } from '../../users/entities/user.entity';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
 
@@ -15,7 +15,7 @@ import { Workspace } from '../../workspaces/entities/workspace.entity';
 @ObjectType()
 export class Company {
   @PrimaryGeneratedColumn({ name: 'ID' })
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 
   @Column({ type: 'varchar2', name: 'NAME' })
