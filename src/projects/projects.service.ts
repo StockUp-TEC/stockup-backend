@@ -5,7 +5,6 @@ import { Project } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserDivisionsService } from '../user-divisions/user-divisions.service';
-import { DivisionsService } from '../divisions/divisions.service';
 
 @Injectable()
 export class ProjectsService {
@@ -34,7 +33,7 @@ export class ProjectsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} project`;
+    return this.projectRepository.findOneBy({ id });
   }
 
   update(id: number, updateProjectInput: UpdateProjectInput) {
