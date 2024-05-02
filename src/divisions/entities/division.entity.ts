@@ -10,6 +10,7 @@ import {
 import { Workspace } from '../../workspaces/entities/workspace.entity';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { UserDivision } from '../../user-divisions/entities/user-division.entity';
+import { Project } from '../../projects/entities/project.entity';
 
 @Entity({ name: 'DIVISION' })
 @ObjectType()
@@ -45,4 +46,7 @@ export class Division {
   })
   @Field(() => [UserDivision], { name: 'users' })
   userDivisions: UserDivision[];
+
+  @OneToMany(() => Project, (project) => project.division, { eager: true })
+  projects: Project[];
 }

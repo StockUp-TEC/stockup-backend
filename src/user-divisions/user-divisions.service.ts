@@ -33,6 +33,18 @@ export class UserDivisionsService {
     }
   }
 
+  async validateUserBelongsToDivision(userId: number, divisionId: number) {
+    const userDivision = await this.userDivisionRepository.findOneBy({
+      userId,
+      divisionId,
+    });
+    if (!userDivision) {
+      throw new NotFoundException(
+        `User with ID ${userId} does not belong to division with ID ${divisionId}.`,
+      );
+    }
+  }
+
   async addUsersToDivision(input: CreateUserDivisionInput) {
     await this.validateUsersAndDivision(
       input.userData.map((u) => u.userId),
