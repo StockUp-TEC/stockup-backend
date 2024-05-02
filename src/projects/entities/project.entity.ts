@@ -43,7 +43,7 @@ export class Project {
   @JoinColumn({ name: 'DIVISION_ID' })
   division: Division;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'ASSIGNED_ID' })
   @Field(() => User)
   user: User;
