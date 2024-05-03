@@ -48,5 +48,6 @@ export class Division {
   userDivisions: UserDivision[];
 
   @OneToMany(() => Project, (project) => project.division, { eager: true })
+  @Field(() => [Project])
   projects: Project[];
 }

@@ -39,7 +39,7 @@ export class Project {
   @Column({ name: 'ASSIGNED_ID' })
   assignedId: number;
 
-  @ManyToOne(() => Division)
+  @ManyToOne(() => Division, (division) => division.projects)
   @JoinColumn({ name: 'DIVISION_ID' })
   division: Division;
 
