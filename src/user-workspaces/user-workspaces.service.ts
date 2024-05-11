@@ -110,4 +110,15 @@ export class UserWorkspacesService {
     await this.userWorkspaceRepository.remove(usersToRemove);
     return true;
   }
+
+  async removeAllUsersFromWorkspace(workspaceId: number) {
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        workspaceId,
+      },
+    });
+
+    await this.userWorkspaceRepository.remove(userWorkspaces);
+    return true;
+  }
 }

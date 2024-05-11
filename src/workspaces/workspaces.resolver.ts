@@ -30,10 +30,7 @@ export class WorkspacesResolver {
   updateWorkspace(
     @Args('updateWorkspaceInput') updateWorkspaceInput: UpdateWorkspaceInput,
   ) {
-    return this.workspacesService.update(
-      updateWorkspaceInput.id,
-      updateWorkspaceInput,
-    );
+    return this.workspacesService.update(updateWorkspaceInput);
   }
 
   @Mutation(() => Workspace)

@@ -53,11 +53,13 @@ export class WorkspacesService {
     return workspace;
   }
 
-  update(id: number, updateWorkspaceInput: UpdateWorkspaceInput) {
-    return `This action updates a #${id} workspace`;
+  update(updateWorkspaceInput: UpdateWorkspaceInput) {
+    const { id, ...input } = updateWorkspaceInput;
+    return this.workspaceRepository.update(id, input);
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    await this.userWorkspaceService.removeAllUsersFromWorkspace(id);
     return this.workspaceRepository.delete(id);
   }
 }

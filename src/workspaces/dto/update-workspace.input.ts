@@ -6,4 +6,13 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 export class UpdateWorkspaceInput extends PartialType(CreateWorkspaceInput) {
   @Field(() => Int)
   id: number;
+
+  @Field()
+  name: string;
+
+  @Field()
+  description: string;
+
+  @Field()
+  color: string;
 }
