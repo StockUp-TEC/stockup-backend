@@ -16,6 +16,7 @@ import { UserDivisionsModule } from './user-divisions/user-divisions.module';
 import { UserWorkspacesModule } from './user-workspaces/user-workspaces.module';
 import { AuthModule } from './auth/auth.module';
 import { ProjectsModule } from './projects/projects.module';
+import { EvidencesModule } from './evidences/evidences.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ProjectsModule } from './projects/projects.module';
     UserWorkspacesModule,
     AuthModule,
     ProjectsModule,
+    EvidencesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
