@@ -18,18 +18,26 @@ export class User {
   @Field(() => Int)
   id: number;
 
-  @Column({ type: 'varchar2', name: 'EMAIL' })
+  @Column({ name: 'EMAIL' })
   @Field(() => String)
   email: string;
 
-  @Column({ type: 'varchar2', name: 'NAME' })
+  @Column({ name: 'NAME' })
   @Field(() => String, { nullable: true })
   name: string;
 
-  @Column({ type: 'varchar2', name: 'AUTH_PROVIDER_ID' })
+  @Column({ name: 'STUDENT_ID' })
+  @Field(() => String, { nullable: true })
+  studentId: string;
+
+  @Column({ name: 'PHONE_NUMBER' })
+  @Field(() => String, { nullable: true })
+  phoneNumber: string;
+
+  @Column({ name: 'AUTH_PROVIDER_ID' })
   authProviderId: string;
 
-  @Column({ type: 'varchar2', name: 'IMAGE_URL' })
+  @Column({ name: 'IMAGE_URL' })
   @Field(() => String, { nullable: true })
   imageUrl: string;
 
