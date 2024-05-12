@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
 import { Workspace } from '../workspaces/entities/workspace.entity';
 import { Role } from '../roles/entities/role.entity';
 import { UserWorkspace } from '../user-workspaces/entities/user-workspace.entity';
@@ -196,15 +195,14 @@ export class UsersService {
     return user;
   }
 
-  async updateUserAuthData(email: string, name: string, authId: string) {
+  async updateUserAuthData(
+    email: string,
+    name: string,
+    authId: string,
+    imageUrl: string,
+  ) {
     const user = await this.userRepository.findOne({
       where: { email },
-      relations: {
-        workspaces: true,
-        companies: true,
-        userWorkspaces: true,
-        userDivisions: true,
-      },
     });
     if (!user) {
       throw new Error('User not found');
@@ -213,6 +211,7 @@ export class UsersService {
     await this.userRepository.update(user.id, {
       name,
       authProviderId: authId,
+      imageUrl,
     });
 
     return true;
@@ -233,16 +232,6 @@ export class UsersService {
     }
 
     return user;
-  }
-
-  async update(updateUserDto: UpdateUserInput) {
-    const { id, ...updateInput } = updateUserDto;
-    const result = await this.userRepository.update(id, updateInput);
-    if (result.affected === 0) {
-      throw new Error(`User with id ${id} not found`);
-    } else {
-      return true;
-    }
   }
 
   async updateRole(input: UpdateUserRoleInput) {

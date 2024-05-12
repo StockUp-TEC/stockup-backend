@@ -11,7 +11,6 @@ import {
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
 import { Role } from '../roles/entities/role.entity';
 import { CreateSponsorInput } from './dto/create-sponsor.input';
 import { UpdateUserRoleInput } from './dto/update-user-role.input';
@@ -54,13 +53,9 @@ export class UsersResolver {
     @Args('email', { type: () => String }) email: string,
     @Args('name', { type: () => String }) name: string,
     @Args('authId', { type: () => String }) authId: string,
+    @Args('imageUrl', { type: () => String }) imageUrl: string,
   ) {
-    return this.usersService.updateUserAuthData(email, name, authId);
-  }
-
-  @Mutation(() => Boolean)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.usersService.update(updateUserInput);
+    return this.usersService.updateUserAuthData(email, name, authId, imageUrl);
   }
 
   @Mutation(() => Boolean)
