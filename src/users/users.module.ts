@@ -23,5 +23,6 @@ import { UserDivision } from '../user-divisions/entities/user-division.entity';
     MailersendModule,
   ],
   providers: [UsersResolver, UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}
