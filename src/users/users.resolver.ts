@@ -54,8 +54,16 @@ export class UsersResolver {
     @Args('name', { type: () => String }) name: string,
     @Args('authId', { type: () => String }) authId: string,
     @Args('imageUrl', { type: () => String }) imageUrl: string,
+    @Args('phoneNumber', { type: () => String, nullable: true })
+    phoneNumber: string,
   ) {
-    return this.usersService.updateUserAuthData(email, name, authId, imageUrl);
+    return this.usersService.updateUserAuthData(
+      email,
+      name,
+      authId,
+      imageUrl,
+      phoneNumber,
+    );
   }
 
   @Mutation(() => Boolean)

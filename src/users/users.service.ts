@@ -200,6 +200,7 @@ export class UsersService {
     name: string,
     authId: string,
     imageUrl: string,
+    phoneNumber: string,
   ) {
     const user = await this.userRepository.findOne({
       where: { email },
@@ -212,6 +213,7 @@ export class UsersService {
       name,
       authProviderId: authId,
       imageUrl,
+      phoneNumber,
     });
 
     return true;
