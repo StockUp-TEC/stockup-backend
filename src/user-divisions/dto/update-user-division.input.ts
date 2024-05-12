@@ -1,5 +1,5 @@
 import { CreateUserDivisionInput } from './create-user-division.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { Field, InputType, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateUserDivisionInput extends PartialType(

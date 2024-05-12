@@ -1,12 +1,12 @@
 import {
-  Resolver,
-  Query,
-  Mutation,
   Args,
-  Int,
   Context,
-  ResolveField,
+  Int,
+  Mutation,
   Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';

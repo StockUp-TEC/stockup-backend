@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { DivisionsService } from './divisions.service';
 import { Division } from './entities/division.entity';
 import { CreateDivisionInput } from './dto/create-division.input';

@@ -1,8 +1,7 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserDivisionsService } from './user-divisions.service';
 import { UserDivision } from './entities/user-division.entity';
 import { CreateUserDivisionInput } from './dto/create-user-division.input';
-import { UpdateUserDivisionInput } from './dto/update-user-division.input';
 
 @Resolver(() => UserDivision)
 export class UserDivisionsResolver {

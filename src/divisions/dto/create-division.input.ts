@@ -1,4 +1,4 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 import { UserDivisionInput } from '../../user-divisions/dto/user-division.input';
 
 @InputType()
