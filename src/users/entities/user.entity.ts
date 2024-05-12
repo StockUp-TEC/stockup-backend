@@ -29,6 +29,10 @@ export class User {
   @Column({ type: 'varchar2', name: 'AUTH_PROVIDER_ID' })
   authProviderId: string;
 
+  @Column({ type: 'varchar2', name: 'IMAGE_URL' })
+  @Field(() => String, { nullable: true })
+  imageUrl: string;
+
   @ManyToMany(() => Workspace, (workspace) => workspace.users)
   @Field(() => [Workspace], { defaultValue: [] })
   workspaces: Workspace[];

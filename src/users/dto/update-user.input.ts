@@ -11,4 +11,7 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {
 
   @Field()
   authProviderId: string;
+
+  @Field()
+  imageUrl: string;
 }
