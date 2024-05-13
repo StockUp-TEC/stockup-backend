@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CreateEvidenceInput {
@@ -7,4 +7,7 @@ export class CreateEvidenceInput {
 
   @Field()
   description: string;
+
+  @Field(() => [Int])
+  userIds: number[];
 }

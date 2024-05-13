@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { Workspace } from '../workspaces/entities/workspace.entity';
 import { Role } from '../roles/entities/role.entity';
@@ -149,6 +149,10 @@ export class UsersService {
     });
   }
 
+  findByIds(ids: number[]) {
+    return this.userRepository.findBy({ id: In(ids) });
+  }
+
   async findAll(first?: number) {
     return await this.userRepository.find({
       take: first,
@@ -172,7 +176,7 @@ export class UsersService {
       },
     });
     if (!user) {
-      throw new Error('User not found');
+      throw new Error(`User with id: ${id} not found`);
     }
 
     return user;

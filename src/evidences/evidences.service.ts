@@ -18,10 +18,15 @@ export class EvidencesService {
     authProviderId: string,
   ) {
     const { id } = await this.usersService.me(authProviderId);
+    const users = await this.usersService.findByIds(
+      createEvidenceInput.userIds,
+    );
     const evidence = this.evidenceRepository.create({
       ...createEvidenceInput,
       createdBy: id,
+      users,
     });
+
     return this.evidenceRepository.save(evidence);
   }
 
