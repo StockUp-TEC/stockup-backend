@@ -10,4 +10,7 @@ export class CreateEvidenceInput {
 
   @Field(() => [Int])
   userIds: number[];
+
+  @Field(() => [Int])
+  companyIds: number[];
 }

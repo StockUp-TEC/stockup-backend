@@ -3,7 +3,7 @@ import { CreateCompanyInput } from './dto/create-company.input';
 import { UpdateCompanyInput } from './dto/update-company.input';
 import { Company } from './entities/company.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
@@ -25,6 +25,10 @@ export class CompaniesService {
         users: true,
       },
     });
+  }
+
+  findByIds(ids: number[]) {
+    return this.companyRepository.findBy({ id: In(ids) });
   }
 
   findOne(id: number) {

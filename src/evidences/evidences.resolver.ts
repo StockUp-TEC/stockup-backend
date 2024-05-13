@@ -16,9 +16,18 @@ export class EvidencesResolver {
     return this.evidencesService.create(createEvidenceInput, authId);
   }
 
-  @Query(() => [Evidence], { name: 'evidences' })
-  findAll() {
-    return this.evidencesService.findAll();
+  @Query(() => [Evidence])
+  findEvidencesForWorkspace(
+    @Args('workspaceId', { type: () => Int }) workspaceId: number,
+  ) {
+    return this.evidencesService.findForWorkspace(workspaceId);
+  }
+
+  @Query(() => [Evidence])
+  findEvidencesForCompany(
+    @Args('companyId', { type: () => Int }) companyId: number,
+  ) {
+    return this.evidencesService.findForCompany(companyId);
   }
 
   @Mutation(() => Evidence)

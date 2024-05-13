@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Company } from '../../companies/entities/company.entity';
 
 @Entity('EVIDENCE')
 @ObjectType()
@@ -40,4 +41,13 @@ export class Evidence {
   })
   @Field(() => [User])
   users: User[];
+
+  @ManyToMany(() => Company, { eager: true })
+  @JoinTable({
+    name: 'EVIDENCE_COMPANY',
+    joinColumn: { name: 'EVIDENCE_ID' },
+    inverseJoinColumn: { name: 'COMPANY_ID' },
+  })
+  @Field(() => [Company])
+  companies: Company[];
 }
