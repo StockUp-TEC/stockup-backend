@@ -16,6 +16,11 @@ export class EvidencesResolver {
     return this.evidencesService.create(createEvidenceInput, authId);
   }
 
+  @Query(() => [Evidence], { name: 'evidences' })
+  findAll() {
+    return this.evidencesService.findAll();
+  }
+
   @Mutation(() => Evidence)
   removeEvidence(@Args('id', { type: () => Int }) id: number) {
     return this.evidencesService.remove(id);

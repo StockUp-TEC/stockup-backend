@@ -30,6 +30,10 @@ export class EvidencesService {
     return this.evidenceRepository.save(evidence);
   }
 
+  findAll() {
+    return this.evidenceRepository.find();
+  }
+
   remove(id: number) {
     return this.evidenceRepository.delete(id);
   }
