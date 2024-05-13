@@ -17,6 +17,8 @@ import { UserWorkspacesModule } from './user-workspaces/user-workspaces.module';
 import { AuthModule } from './auth/auth.module';
 import { ProjectsModule } from './projects/projects.module';
 import { EvidencesModule } from './evidences/evidences.module';
+import { TasksModule } from './tasks/tasks.module';
+import { StatusesModule } from './statuses/statuses.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { EvidencesModule } from './evidences/evidences.module';
     AuthModule,
     ProjectsModule,
     EvidencesModule,
+    TasksModule,
+    StatusesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
