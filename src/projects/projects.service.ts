@@ -50,6 +50,6 @@ export class ProjectsService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} project`;
+    return this.projectRepository.delete(id);
   }
 }
