@@ -4,6 +4,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -38,9 +40,6 @@ export class Project {
   @Column({ name: 'BACKGROUND_ID' })
   backgroundId: number;
 
-  @Column({ name: 'ASSIGNED_ID' })
-  assignedId: number;
-
   @Column({ name: 'IS_COMPLETED' })
   @Field(() => Boolean)
   isCompleted: boolean;
@@ -49,10 +48,14 @@ export class Project {
   @JoinColumn({ name: 'DIVISION_ID' })
   division: Division;
 
-  @ManyToOne(() => User, { eager: true })
-  @JoinColumn({ name: 'ASSIGNED_ID' })
-  @Field(() => User, { name: 'assigned' })
-  user: User;
+  @ManyToMany(() => User, { eager: true })
+  @JoinTable({
+    name: 'USER_PROJECT',
+    joinColumn: { name: 'PROJECT_ID' },
+    inverseJoinColumn: { name: 'USER_ID' },
+  })
+  @Field(() => [User], { name: 'users' })
+  users: User[];
 
   @OneToMany(() => Status, (status) => status.project, { eager: true })
   @Field(() => [Status])

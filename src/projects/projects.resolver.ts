@@ -1,4 +1,4 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ProjectsService } from './projects.service';
 import { Project } from './entities/project.entity';
 import { CreateProjectInput } from './dto/create-project.input';
@@ -11,28 +11,18 @@ export class ProjectsResolver {
   @Mutation(() => Project)
   createProject(
     @Args('createProjectInput') createProjectInput: CreateProjectInput,
+    @Context() context,
   ) {
-    return this.projectsService.create(createProjectInput);
-  }
-
-  @Query(() => [Project], { name: 'projects' })
-  findAll() {
-    return this.projectsService.findAll();
-  }
-
-  @Query(() => Project, { name: 'project' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.projectsService.findOne(id);
+    const authId = context.req.user.sub;
+    return this.projectsService.create(createProjectInput, authId);
   }
 
   @Mutation(() => Project)
-  updateProject(
-    @Args('updateProjectInput') updateProjectInput: UpdateProjectInput,
+  setProjectUsers(
+    @Args('projectId', { type: () => Int }) projectId: number,
+    @Args('userIds', { type: () => [Int] }) userIds: number[],
   ) {
-    return this.projectsService.update(
-      updateProjectInput.id,
-      updateProjectInput,
-    );
+    return this.projectsService.setProjectUsers(projectId, userIds);
   }
 
   @Mutation(() => Project)
