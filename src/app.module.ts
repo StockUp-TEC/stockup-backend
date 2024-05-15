@@ -19,6 +19,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { EvidencesModule } from './evidences/evidences.module';
 import { TasksModule } from './tasks/tasks.module';
 import { StatusesModule } from './statuses/statuses.module';
+import { BackgroundsModule } from './backgrounds/backgrounds.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { StatusesModule } from './statuses/statuses.module';
     EvidencesModule,
     TasksModule,
     StatusesModule,
+    BackgroundsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

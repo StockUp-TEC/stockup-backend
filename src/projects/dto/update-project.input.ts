@@ -14,7 +14,7 @@ export class UpdateProjectInput {
   @Field({ nullable: true })
   reason: string;
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   backgroundId: number;
 
   @Field(() => [Int], { nullable: true })

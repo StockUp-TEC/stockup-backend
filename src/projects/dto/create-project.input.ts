@@ -11,6 +11,6 @@ export class CreateProjectInput {
   @Field()
   divisionId: number;
 
-  @Field()
+  @Field(() => Number)
   backgroundId: number;
 }

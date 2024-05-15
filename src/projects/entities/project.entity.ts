@@ -15,6 +15,7 @@ import { Division } from '../../divisions/entities/division.entity';
 import { Status } from '../../statuses/entities/status.entity';
 import { Task } from '../../tasks/entities/task.entity';
 import { ProjectHistory } from './project-history.entity';
+import { Background } from '../../backgrounds/entities/background.entity';
 
 @Entity('PROJECT')
 @ObjectType()
@@ -72,4 +73,9 @@ export class Project {
   })
   @Field(() => [ProjectHistory], { defaultValue: [] })
   history: ProjectHistory[];
+
+  @ManyToOne(() => Background, { eager: true })
+  @JoinColumn({ name: 'BACKGROUND_ID' })
+  @Field(() => Background)
+  background: Background;
 }

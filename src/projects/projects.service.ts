@@ -7,6 +7,7 @@ import { UserDivisionsService } from '../user-divisions/user-divisions.service';
 import { UsersService } from '../users/users.service';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { ProjectHistory } from './entities/project-history.entity';
+import { BackgroundsService } from '../backgrounds/backgrounds.service';
 
 @Injectable()
 export class ProjectsService {
@@ -17,6 +18,7 @@ export class ProjectsService {
     private projectHistoryRepository: Repository<ProjectHistory>,
     private readonly userDivisionService: UserDivisionsService,
     private readonly usersService: UsersService,
+    private readonly backgroundsService: BackgroundsService,
   ) {}
 
   async create(createProjectInput: CreateProjectInput, authId: string) {
@@ -28,6 +30,8 @@ export class ProjectsService {
       user.id,
       divisionId,
     );
+
+    await this.backgroundsService.findOne(backgroundId);
 
     const project = this.projectRepository.create(createProjectInput);
     project.users = [user];
