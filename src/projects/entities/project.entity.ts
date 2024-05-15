@@ -66,7 +66,10 @@ export class Project {
   @Field(() => [Task])
   tasks: Task[];
 
-  @OneToMany(() => ProjectHistory, (projectHistory) => projectHistory.project)
-  @Field(() => [ProjectHistory])
+  @OneToMany(() => ProjectHistory, (projectHistory) => projectHistory.project, {
+    eager: true,
+    cascade: true,
+  })
+  @Field(() => [ProjectHistory], { defaultValue: [] })
   history: ProjectHistory[];
 }

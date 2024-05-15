@@ -61,10 +61,17 @@ export class ProjectsService {
     }
 
     // Check is dueDate changed
-    if (updateInput.dueDate !== project.dueDate) {
+    if (
+      new Date(updateInput.dueDate).getTime() !==
+      new Date(project.dueDate).getTime()
+    ) {
       // Check if the dueDate is in the future
-      if (updateInput.dueDate < new Date()) {
+      if (new Date(updateInput.dueDate).getTime() < new Date().getTime()) {
         throw new Error('Due date must be in the future.');
+      }
+
+      if (!updateInput.reason || updateInput.reason === '') {
+        throw new Error('Reason is required when changing the due date.');
       }
 
       // Add to the project's history
@@ -72,10 +79,9 @@ export class ProjectsService {
       const newChange = this.projectHistoryRepository.create({
         newDueDate: updateInput.dueDate,
         previousDueDate: project.dueDate,
-        reason: 'REASON FOR CHANGE',
+        reason: updateInput.reason,
         updatedBy: user.id,
       });
-
       project.history.push(newChange);
     }
 
