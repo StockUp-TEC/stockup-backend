@@ -19,4 +19,8 @@ export class BackgroundsService {
     }
     return background;
   }
+
+  findAll() {
+    return this.backgroundRepository.find();
+  }
 }
