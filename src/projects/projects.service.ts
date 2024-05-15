@@ -59,11 +59,6 @@ export class ProjectsService {
       new Date(updateInput.dueDate).getTime() !==
       new Date(project.dueDate).getTime()
     ) {
-      // Check if the dueDate is in the future
-      if (new Date(updateInput.dueDate).getTime() < new Date().getTime()) {
-        throw new Error('Due date must be in the future.');
-      }
-
       if (!updateInput.reason || updateInput.reason === '') {
         throw new Error('Reason is required when changing the due date.');
       }
@@ -79,7 +74,8 @@ export class ProjectsService {
       project.history.push(newChange);
     }
 
-    return this.projectRepository.save({ ...project, ...updateInput });
+    await this.projectRepository.save({ ...project, ...updateInput });
+    return this.projectRepository.findOneBy({ id });
   }
 
   remove(id: number) {

@@ -43,7 +43,7 @@ export class ProjectHistory {
   @JoinColumn({ name: 'PROJECT_ID' })
   project: Project;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'UPDATED_BY' })
   @Field(() => User)
   updatedByUser: User;
