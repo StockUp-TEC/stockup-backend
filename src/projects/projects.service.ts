@@ -43,7 +43,7 @@ export class ProjectsService {
   async update(updateProjectInput: UpdateProjectInput, authId: string) {
     const user = await this.usersService.me(authId);
 
-    const { id, userIds, ...updateInput } = updateProjectInput;
+    const { id, userIds, backgroundId, ...updateInput } = updateProjectInput;
     const project = await this.projectRepository.findOneBy({ id });
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found.`);
@@ -57,6 +57,8 @@ export class ProjectsService {
 
       project.users = users;
     }
+
+    project.background = await this.backgroundsService.findOne(backgroundId);
 
     // Check is dueDate changed
     if (
