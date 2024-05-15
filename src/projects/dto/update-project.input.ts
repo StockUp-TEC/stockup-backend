@@ -16,4 +16,7 @@ export class UpdateProjectInput {
 
   @Field({ nullable: true })
   backgroundId: number;
+
+  @Field(() => [Int], { nullable: true })
+  userIds: number[];
 }

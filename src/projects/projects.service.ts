@@ -36,28 +36,22 @@ export class ProjectsService {
     return this.projectRepository.save(project);
   }
 
-  async setProjectUsers(projectId: number, userIds: number[]) {
-    const project = await this.projectRepository.findOneBy({ id: projectId });
-    if (!project) {
-      throw new NotFoundException(`Project with ID ${projectId} not found.`);
-    }
-
-    const users = await this.usersService.findByIds(userIds);
-    if (users.length !== userIds.length) {
-      throw new NotFoundException('One or more users not found.');
-    }
-
-    project.users = users;
-    return this.projectRepository.save(project);
-  }
-
   async update(updateProjectInput: UpdateProjectInput, authId: string) {
     const user = await this.usersService.me(authId);
 
-    const { id, ...updateInput } = updateProjectInput;
+    const { id, userIds, ...updateInput } = updateProjectInput;
     const project = await this.projectRepository.findOneBy({ id });
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found.`);
+    }
+
+    if (userIds) {
+      const users = await this.usersService.findByIds(userIds);
+      if (users.length !== userIds.length) {
+        throw new NotFoundException('One or more users not found.');
+      }
+
+      project.users = users;
     }
 
     // Check is dueDate changed

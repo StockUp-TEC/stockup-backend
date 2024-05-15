@@ -18,14 +18,6 @@ export class ProjectsResolver {
   }
 
   @Mutation(() => Project)
-  setProjectUsers(
-    @Args('projectId', { type: () => Int }) projectId: number,
-    @Args('userIds', { type: () => [Int] }) userIds: number[],
-  ) {
-    return this.projectsService.setProjectUsers(projectId, userIds);
-  }
-
-  @Mutation(() => Project)
   updateProject(
     @Args('updateProjectInput') updateProjectInput: UpdateProjectInput,
     @Context() context,

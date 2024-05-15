@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Project } from './project.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('PROJECT_HISTORY')
 @ObjectType()
@@ -28,7 +29,6 @@ export class ProjectHistory {
   updatedAt: Date;
 
   @Column({ name: 'UPDATED_BY' })
-  @Field(() => Int)
   updatedBy: number;
 
   @Column({ name: 'PREVIOUS_DUE_DATE' })
@@ -42,4 +42,9 @@ export class ProjectHistory {
   @ManyToOne(() => Project, (project) => project.history)
   @JoinColumn({ name: 'PROJECT_ID' })
   project: Project;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'UPDATED_BY' })
+  @Field(() => User)
+  updatedByUser: User;
 }
