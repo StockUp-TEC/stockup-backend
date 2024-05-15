@@ -13,7 +13,4 @@ export class CreateProjectInput {
 
   @Field()
   backgroundId: number;
-
-  @Field()
-  assignedId: number;
 }

@@ -26,6 +26,15 @@ export class ProjectsResolver {
   }
 
   @Mutation(() => Project)
+  updateProject(
+    @Args('updateProjectInput') updateProjectInput: UpdateProjectInput,
+    @Context() context,
+  ) {
+    const authId = context.req.user.sub;
+    return this.projectsService.update(updateProjectInput, authId);
+  }
+
+  @Mutation(() => Project)
   removeProject(@Args('id', { type: () => Int }) id: number) {
     return this.projectsService.remove(id);
   }

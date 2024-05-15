@@ -14,6 +14,7 @@ import { User } from '../../users/entities/user.entity';
 import { Division } from '../../divisions/entities/division.entity';
 import { Status } from '../../statuses/entities/status.entity';
 import { Task } from '../../tasks/entities/task.entity';
+import { ProjectHistory } from './project-history.entity';
 
 @Entity('PROJECT')
 @ObjectType()
@@ -64,4 +65,8 @@ export class Project {
   @OneToMany(() => Task, (task) => task.project, { eager: true })
   @Field(() => [Task])
   tasks: Task[];
+
+  @OneToMany(() => ProjectHistory, (projectHistory) => projectHistory.project)
+  @Field(() => [ProjectHistory])
+  history: ProjectHistory[];
 }
