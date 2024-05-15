@@ -53,9 +53,10 @@ export class WorkspacesService {
     return workspace;
   }
 
-  update(updateWorkspaceInput: UpdateWorkspaceInput) {
+  async update(updateWorkspaceInput: UpdateWorkspaceInput) {
     const { id, ...input } = updateWorkspaceInput;
-    return this.workspaceRepository.update(id, input);
+    await this.workspaceRepository.update(id, input);
+    return this.workspaceRepository.findOneBy({ id });
   }
 
   async remove(id: number) {
