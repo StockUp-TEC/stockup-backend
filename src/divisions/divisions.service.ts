@@ -24,7 +24,6 @@ export class DivisionsService {
   findAll() {
     return this.divisionRepository.find({
       relations: {
-        workspace: true,
         userDivisions: true,
       },
     });
@@ -34,7 +33,6 @@ export class DivisionsService {
     return this.divisionRepository.findOne({
       where: { id },
       relations: {
-        workspace: true,
         userDivisions: true,
       },
     });
@@ -81,7 +79,6 @@ export class DivisionsService {
     return await this.divisionRepository.findOne({
       where: { id: division.id },
       relations: {
-        workspace: true,
         userDivisions: true,
       },
     });
