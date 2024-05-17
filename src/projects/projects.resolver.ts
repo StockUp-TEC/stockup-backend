@@ -17,6 +17,11 @@ export class ProjectsResolver {
     return this.projectsService.create(createProjectInput, authId);
   }
 
+  @Query(() => Project)
+  project(@Args('id', { type: () => Int }) id: number) {
+    return this.projectsService.findOne(id);
+  }
+
   @Mutation(() => Project)
   updateProject(
     @Args('updateProjectInput') updateProjectInput: UpdateProjectInput,

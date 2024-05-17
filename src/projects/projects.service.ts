@@ -40,6 +40,10 @@ export class ProjectsService {
     return this.projectRepository.save(project);
   }
 
+  findOne(id: number) {
+    return this.projectRepository.findOneBy({ id });
+  }
+
   async update(updateProjectInput: UpdateProjectInput, authId: string) {
     const user = await this.usersService.me(authId);
 
