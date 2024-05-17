@@ -45,6 +45,6 @@ export class ProjectHistory {
 
   @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'UPDATED_BY' })
-  @Field(() => User)
+  @Field(() => User, { name: 'updatedBy' })
   updatedByUser: User;
 }
