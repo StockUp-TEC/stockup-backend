@@ -37,7 +37,8 @@ export class ProjectsService {
     project.users = [user];
 
     // Verify that the background exists
-    return this.projectRepository.save(project);
+    await this.projectRepository.save(project);
+    return this.projectRepository.findOneBy({ id: project.id });
   }
 
   findOne(id: number) {
