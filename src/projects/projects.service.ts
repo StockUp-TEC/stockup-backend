@@ -93,6 +93,6 @@ export class ProjectsService {
     if (result.affected === 0) {
       throw new NotFoundException(`Project with ID ${id} not found.`);
     }
-    return result;
+    return true;
   }
 }

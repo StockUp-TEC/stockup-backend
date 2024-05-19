@@ -31,7 +31,7 @@ export class ProjectsResolver {
     return this.projectsService.update(updateProjectInput, authId);
   }
 
-  @Mutation(() => Project)
+  @Mutation(() => Boolean)
   removeProject(@Args('id', { type: () => Int }) id: number) {
     return this.projectsService.remove(id);
   }
