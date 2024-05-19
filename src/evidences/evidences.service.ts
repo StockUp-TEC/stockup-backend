@@ -37,12 +37,15 @@ export class EvidencesService {
   }
 
   findForWorkspace(workspaceId: number) {
-    return this.evidenceRepository
-      .createQueryBuilder('evidence')
-      .innerJoin('evidence.companies', 'company')
-      .innerJoin('company.workspace', 'workspace')
-      .where('workspace.id = :workspaceId', { workspaceId })
-      .getMany();
+    return this.evidenceRepository.find({
+      where: {
+        companies: {
+          workspace: {
+            id: workspaceId,
+          },
+        },
+      },
+    });
   }
 
   findForCompany(companyId: number) {
