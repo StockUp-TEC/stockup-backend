@@ -41,8 +41,12 @@ export class ProjectsService {
     return this.projectRepository.findOneBy({ id: project.id });
   }
 
-  findOne(id: number) {
-    return this.projectRepository.findOneBy({ id });
+  async findOne(id: number) {
+    const project = await this.projectRepository.findOneBy({ id });
+    if (!project) {
+      throw new NotFoundException(`Project with ID ${id} not found.`);
+    }
+    return project;
   }
 
   async update(updateProjectInput: UpdateProjectInput, authId: string) {
