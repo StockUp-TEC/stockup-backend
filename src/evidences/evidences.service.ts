@@ -58,7 +58,8 @@ export class EvidencesService {
     });
   }
 
-  remove(id: number) {
-    return this.evidenceRepository.delete(id);
+  async remove(id: number) {
+    await this.evidenceRepository.delete(id);
+    return true;
   }
 }

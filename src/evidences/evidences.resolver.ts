@@ -30,7 +30,7 @@ export class EvidencesResolver {
     return this.evidencesService.findForCompany(companyId);
   }
 
-  @Mutation(() => Evidence)
+  @Mutation(() => Boolean)
   removeEvidence(@Args('id', { type: () => Int }) id: number) {
     return this.evidencesService.remove(id);
   }
