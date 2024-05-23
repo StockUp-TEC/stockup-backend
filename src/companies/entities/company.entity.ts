@@ -40,6 +40,5 @@ export class Company {
 
   @ManyToOne(() => Workspace, (workspace) => workspace.companies)
   @JoinColumn({ name: 'WORKSPACE_ID' })
-  @Field(() => Workspace)
   workspace: Workspace;
 }
