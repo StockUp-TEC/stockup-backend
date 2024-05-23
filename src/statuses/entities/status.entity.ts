@@ -7,8 +7,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Project } from '../../projects/entities/project.entity';
 import { Task } from '../../tasks/entities/task.entity';
+import { Workspace } from '../../workspaces/entities/workspace.entity';
 
 @Entity({ name: 'STATUS' })
 @ObjectType()
@@ -25,12 +25,12 @@ export class Status {
   @Field(() => String)
   color: string;
 
-  @Column({ name: 'PROJECT_ID' })
-  projectId: number;
+  @Column({ name: 'WORKSPACE_ID' })
+  workspaceId: number;
 
-  @ManyToOne(() => Project, (project) => project.statuses)
-  @JoinColumn({ name: 'PROJECT_ID' })
-  project: Project;
+  @ManyToOne(() => Workspace, (workspace) => workspace.statuses)
+  @JoinColumn({ name: 'WORKSPACE_ID' })
+  workspace: Workspace;
 
   @OneToMany(() => Task, (task) => task.status, { eager: true })
   @Field(() => [Task])

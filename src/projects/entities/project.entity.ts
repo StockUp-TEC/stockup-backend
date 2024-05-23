@@ -12,7 +12,6 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Division } from '../../divisions/entities/division.entity';
-import { Status } from '../../statuses/entities/status.entity';
 import { Task } from '../../tasks/entities/task.entity';
 import { ProjectHistory } from './project-history.entity';
 import { Background } from '../../backgrounds/entities/background.entity';
@@ -58,10 +57,6 @@ export class Project {
   })
   @Field(() => [User], { name: 'users' })
   users: User[];
-
-  @OneToMany(() => Status, (status) => status.project, { eager: true })
-  @Field(() => [Status])
-  statuses: Status[];
 
   @OneToMany(() => Task, (task) => task.project, { eager: true })
   @Field(() => [Task])
