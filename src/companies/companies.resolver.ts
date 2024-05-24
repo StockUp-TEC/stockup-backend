@@ -25,7 +25,7 @@ export class CompaniesResolver {
     return this.companiesService.findOne(id);
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Company)
   updateCompany(
     @Args('companyId', { type: () => Int }) id: number,
     @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput,
