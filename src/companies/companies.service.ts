@@ -42,8 +42,9 @@ export class CompaniesService {
     });
   }
 
-  async update(id: number, updateCompanyInput: UpdateCompanyInput) {
-    const result = await this.companyRepository.update(id, updateCompanyInput);
+  async update(updateCompanyInput: UpdateCompanyInput) {
+    const { id, ...input } = updateCompanyInput;
+    const result = await this.companyRepository.update(id, input);
     if (result.affected === 0) {
       throw new Error(`Company with id ${id} not found`);
     }
