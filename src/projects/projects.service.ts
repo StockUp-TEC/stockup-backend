@@ -24,7 +24,11 @@ export class ProjectsService {
   async create(createProjectInput: CreateProjectInput, authId: string) {
     const user = await this.usersService.me(authId);
 
-    const { divisionId, backgroundId } = createProjectInput;
+    const { divisionId, backgroundId, dueDate } = createProjectInput;
+
+    if (new Date(dueDate).getTime() < new Date().getTime()) {
+      throw new Error('Due date must be in the future.');
+    }
 
     await this.userDivisionService.validateUserBelongsToDivision(
       user.id,
