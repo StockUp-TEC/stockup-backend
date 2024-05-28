@@ -10,7 +10,11 @@ export class PriorityLevelsService {
     private priorityLevelRepository: Repository<PriorityLevel>,
   ) {}
 
-  findOne(id: number) {
-    return this.priorityLevelRepository.findOneBy({ id });
+  async findOne(id: number) {
+    const status = await this.priorityLevelRepository.findOneBy({ id });
+    if (!status) {
+      throw new Error('Priority level not found');
+    }
+    return status;
   }
 }

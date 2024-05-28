@@ -6,6 +6,9 @@ import { TaskHistory } from './entities/task-history.entity';
 import { UpdateTaskInput } from './dto/update-task.input';
 import { CreateTaskInput } from './dto/create-task.input';
 import { UsersService } from '../users/users.service';
+import { ProjectsService } from '../projects/projects.service';
+import { PriorityLevelsService } from '../priority-levels/priority-levels.service';
+import { StatusesService } from '../statuses/statuses.service';
 
 @Injectable()
 export class TasksService {
@@ -15,10 +18,28 @@ export class TasksService {
     @InjectRepository(TaskHistory)
     private taskHistoryRepository: Repository<TaskHistory>,
     private readonly userService: UsersService,
+    private readonly projectService: ProjectsService,
+    private readonly statusService: StatusesService,
+    private readonly priorityService: PriorityLevelsService,
   ) {}
 
-  create(createTaskInput: CreateTaskInput) {
-    return this.taskRepository.save(createTaskInput);
+  async create(authId: string, createTaskInput: CreateTaskInput) {
+    const currentUser = await this.userService.me(authId);
+    // Verify assigned user exists
+    await this.userService.findOne(createTaskInput.assignedId);
+    // Verify project exists
+    await this.projectService.findOne(createTaskInput.projectId);
+    // Verify status exists
+    await this.statusService.findOne(createTaskInput.statusId);
+    // Verify priority exists
+    if (createTaskInput.priorityId)
+      await this.priorityService.findOne(createTaskInput.priorityId);
+
+    const newTask = this.taskRepository.create({
+      ...createTaskInput,
+      createdBy: currentUser.id,
+    });
+    return this.taskRepository.save(newTask);
   }
 
   findOne(id: number) {
@@ -26,6 +47,7 @@ export class TasksService {
   }
 
   async update(authId: string, updateTaskInput: UpdateTaskInput) {
+    const { id, ...input } = updateTaskInput;
     const queryRunner =
       this.taskRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
@@ -34,15 +56,15 @@ export class TasksService {
     try {
       const currentUser = await this.userService.me(authId);
       const existingTask = await queryRunner.manager.findOne(Task, {
-        where: { id: updateTaskInput.id },
+        where: { id },
       });
       if (!existingTask) {
-        throw new Error(`Task with id ${updateTaskInput.id} not found`);
+        throw new Error(`Task with id ${id} not found`);
       }
 
-      const differences = Object.keys(updateTaskInput).reduce((acc, key) => {
-        if (existingTask[key] !== updateTaskInput[key]) {
-          acc[key] = { old: existingTask[key], new: updateTaskInput[key] };
+      const differences = Object.keys(input).reduce((acc, key) => {
+        if (existingTask[key] !== input[key]) {
+          acc[key] = { old: existingTask[key], new: input[key] };
         }
         return acc;
       }, {});
@@ -51,8 +73,7 @@ export class TasksService {
         await queryRunner.release();
         return existingTask; // No changes detected
       }
-
-      await queryRunner.manager.update(Task, existingTask.id, updateTaskInput);
+      await queryRunner.manager.update(Task, existingTask.id, input);
       const updatedTask = await queryRunner.manager.findOne(Task, {
         where: { id: existingTask.id },
       });
@@ -85,6 +106,6 @@ export class TasksService {
     if (result.affected === 0) {
       throw new Error(`Task with id ${id} not found`);
     }
-    return result;
+    return true;
   }
 }

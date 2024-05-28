@@ -20,8 +20,12 @@ export class StatusesService {
     return this.statusRepository.find();
   }
 
-  findOne(id: number) {
-    return this.statusRepository.findOneBy({ id });
+  async findOne(id: number) {
+    const status = await this.statusRepository.findOneBy({ id });
+    if (!status) {
+      throw new Error('Status not found');
+    }
+    return status;
   }
 
   remove(id: number) {

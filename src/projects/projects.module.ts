@@ -16,5 +16,6 @@ import { BackgroundsModule } from '../backgrounds/backgrounds.module';
     TypeOrmModule.forFeature([Project, ProjectHistory]),
   ],
   providers: [ProjectsResolver, ProjectsService],
+  exports: [ProjectsService],
 })
 export class ProjectsModule {}

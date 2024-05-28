@@ -58,8 +58,8 @@ export class Project {
   @Field(() => [User], { name: 'users' })
   users: User[];
 
-  @OneToMany(() => Task, (task) => task.project, { eager: true })
-  @Field(() => [Task])
+  @OneToMany(() => Task, (task) => task.project, { eager: true, cascade: true })
+  @Field(() => [Task], { defaultValue: [] })
   tasks: Task[];
 
   @OneToMany(() => ProjectHistory, (projectHistory) => projectHistory.project, {

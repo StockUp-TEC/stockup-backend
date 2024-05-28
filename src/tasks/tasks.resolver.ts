@@ -9,8 +9,12 @@ export class TasksResolver {
   constructor(private readonly tasksService: TasksService) {}
 
   @Mutation(() => Task)
-  createTask(@Args('createTaskInput') createTaskInput: CreateTaskInput) {
-    return this.tasksService.create(createTaskInput);
+  createTask(
+    @Context() context,
+    @Args('createTaskInput') createTaskInput: CreateTaskInput,
+  ) {
+    const authId = context.req.user.sub;
+    return this.tasksService.create(authId, createTaskInput);
   }
 
   @Query(() => Task, { name: 'task' })
@@ -27,7 +31,7 @@ export class TasksResolver {
     return this.tasksService.update(authId, updateTaskInput);
   }
 
-  @Mutation(() => Task)
+  @Mutation(() => Boolean)
   removeTask(@Args('id', { type: () => Int }) id: number) {
     return this.tasksService.remove(id);
   }

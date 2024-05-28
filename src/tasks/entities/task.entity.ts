@@ -26,7 +26,7 @@ export class Task {
   name: string;
 
   @Column({ name: 'DESCRIPTION' })
-  @Field()
+  @Field({ nullable: true })
   description: string;
 
   @Column({ name: 'STATUS_ID' })
@@ -39,26 +39,29 @@ export class Task {
   assignedId: number;
 
   @Column({ name: 'DUE_DATE' })
-  @Field()
+  @Field({ nullable: true })
   dueDate: Date;
 
   @CreateDateColumn({ name: 'CREATED_AT' })
   @Field()
   createdAt: Date;
 
-  @Column({ name: 'EFFORT' })
+  @Column({ name: 'CREATED_BY' })
   @Field()
+  createdBy: number;
+
+  @Column({ name: 'EFFORT' })
+  @Field({ nullable: true })
   effort: number;
 
   @Column({ name: 'PRIORITY_ID' })
-  @Field()
   priorityId: number;
 
   @ManyToOne(() => Project, (project) => project.tasks)
   @JoinColumn({ name: 'PROJECT_ID' })
   project: Project;
 
-  @ManyToOne(() => Status, (status) => status.tasks)
+  @ManyToOne(() => Status, { eager: true })
   @JoinColumn({ name: 'STATUS_ID' })
   @Field(() => Status)
   status: Status;
@@ -69,11 +72,16 @@ export class Task {
 
   @ManyToOne(() => PriorityLevel)
   @JoinColumn({ name: 'PRIORITY_ID' })
+  @Field({ nullable: true })
   priority: PriorityLevel;
 
   @OneToMany(() => TaskHistory, (taskHistory) => taskHistory.task, {
     eager: true,
   })
-  @Field(() => [TaskHistory])
+  @Field(() => [TaskHistory], { defaultValue: [] })
   history: TaskHistory[];
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'CREATED_BY' })
+  createdByUser: User;
 }

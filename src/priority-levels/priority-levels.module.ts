@@ -6,5 +6,6 @@ import { PriorityLevel } from './entities/priority-level.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([PriorityLevel])],
   providers: [PriorityLevelsService],
+  exports: [PriorityLevelsService],
 })
 export class PriorityLevelsModule {}
