@@ -66,8 +66,9 @@ export class Task {
   @Field(() => Status)
   status: Status;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'ASSIGNED_ID' })
+  @Field(() => User, { nullable: true })
   assignedUser: User;
 
   @ManyToOne(() => PriorityLevel)
