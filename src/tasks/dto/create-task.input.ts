@@ -18,7 +18,7 @@ export class CreateTaskInput {
   projectId: number;
 
   @Field(() => Int, { nullable: true })
-  userId: number;
+  assignedId: number;
 
   @Field(() => Int, { nullable: true })
   effort: number;

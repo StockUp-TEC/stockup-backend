@@ -5,10 +5,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Project } from '../../projects/entities/project.entity';
 import { Status } from '../../statuses/entities/status.entity';
+import { User } from '../../users/entities/user.entity';
+import { PriorityLevel } from '../../priority-levels/entities/priority-level.entity';
+import { TaskHistory } from './task-history.entity';
 
 @Entity({ name: 'TASK' })
 @ObjectType()
@@ -20,6 +24,10 @@ export class Task {
   @Column({ name: 'NAME' })
   @Field()
   name: string;
+
+  @Column({ name: 'DESCRIPTION' })
+  @Field()
+  description: string;
 
   @Column({ name: 'STATUS_ID' })
   statusId: number;
@@ -38,11 +46,34 @@ export class Task {
   @Field()
   createdAt: Date;
 
+  @Column({ name: 'EFFORT' })
+  @Field()
+  effort: number;
+
+  @Column({ name: 'PRIORITY_ID' })
+  @Field()
+  priorityId: number;
+
   @ManyToOne(() => Project, (project) => project.tasks)
   @JoinColumn({ name: 'PROJECT_ID' })
   project: Project;
 
   @ManyToOne(() => Status, (status) => status.tasks)
   @JoinColumn({ name: 'STATUS_ID' })
+  @Field(() => Status)
   status: Status;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'ASSIGNED_ID' })
+  assignedUser: User;
+
+  @ManyToOne(() => PriorityLevel)
+  @JoinColumn({ name: 'PRIORITY_ID' })
+  priority: PriorityLevel;
+
+  @OneToMany(() => TaskHistory, (taskHistory) => taskHistory.task, {
+    eager: true,
+  })
+  @Field(() => [TaskHistory])
+  history: TaskHistory[];
 }

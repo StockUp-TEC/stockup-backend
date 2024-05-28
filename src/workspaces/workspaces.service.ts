@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserWorkspacesService } from '../user-workspaces/user-workspaces.service';
 import { User } from '../users/entities/user.entity';
+import * as graphqlFields from 'graphql-fields';
+import { GraphQLResolveInfo } from 'graphql/type';
 
 @Injectable()
 export class WorkspacesService {
@@ -42,11 +44,14 @@ export class WorkspacesService {
     return this.workspaceRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, info: GraphQLResolveInfo) {
+    const relations = this.getRelations(info);
+    console.log('Getting workspace');
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
-      relations: ['users.userWorkspaces'],
+      relations,
     });
+    console.log('Got workspace');
     if (!workspace) {
       throw new Error('Workspace not found');
     }
@@ -62,5 +67,18 @@ export class WorkspacesService {
   async remove(id: number) {
     await this.userWorkspaceService.removeAllUsersFromWorkspace(id);
     return this.workspaceRepository.delete(id);
+  }
+
+  private getRelations(info: GraphQLResolveInfo): string[] {
+    const fields = graphqlFields(info);
+    const relations = [];
+
+    if (fields.divisions) relations.push('divisions');
+    if (fields.users) relations.push('users');
+    if (fields.users.role) relations.push('users.userWorkspaces');
+    if (fields.companies) relations.push('companies');
+    if (fields.statuses) relations.push('statuses');
+
+    return relations;
   }
 }

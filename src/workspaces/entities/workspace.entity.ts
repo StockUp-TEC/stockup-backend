@@ -32,11 +32,11 @@ export class Workspace {
   @Field(() => String)
   color: string;
 
-  @OneToMany(() => Division, (division) => division.workspace, { eager: true })
+  @OneToMany(() => Division, (division) => division.workspace)
   @Field(() => [Division], { defaultValue: [] })
   divisions: Division[];
 
-  @ManyToMany(() => User, (user) => user.workspaces, { eager: true })
+  @ManyToMany(() => User, (user) => user.workspaces)
   @JoinTable({
     name: 'USER_WORKSPACE',
     joinColumn: { name: 'WORKSPACE_ID', referencedColumnName: 'id' },
@@ -45,14 +45,14 @@ export class Workspace {
   @Field(() => [User], { defaultValue: [] })
   users: User[];
 
-  @OneToMany(() => Company, (company) => company.workspace, { eager: true })
+  @OneToMany(() => Company, (company) => company.workspace)
   @Field(() => [Company], { defaultValue: [] })
   companies: Company[];
 
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.workspace)
   userWorkspaces: UserWorkspace[];
 
-  @OneToMany(() => Status, (status) => status.workspace, { eager: true })
+  @OneToMany(() => Status, (status) => status.workspace)
   @Field(() => [Status])
   statuses: Status[];
 }

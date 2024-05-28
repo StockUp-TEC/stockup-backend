@@ -33,6 +33,5 @@ export class Status {
   workspace: Workspace;
 
   @OneToMany(() => Task, (task) => task.status, { eager: true })
-  @Field(() => [Task])
   tasks: Task[];
 }

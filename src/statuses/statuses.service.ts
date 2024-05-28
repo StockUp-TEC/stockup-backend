@@ -1,26 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { CreateStatusInput } from './dto/create-status.input';
 import { UpdateStatusInput } from './dto/update-status.input';
+import { Status } from './entities/status.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class StatusesService {
+  constructor(
+    @InjectRepository(Status)
+    private statusRepository: Repository<Status>,
+  ) {}
+
   create(createStatusInput: CreateStatusInput) {
     return 'This action adds a new status';
   }
 
   findAll() {
-    return `This action returns all statuses`;
+    return this.statusRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} status`;
-  }
-
-  update(id: number, updateStatusInput: UpdateStatusInput) {
-    return `This action updates a #${id} status`;
+    return this.statusRepository.findOneBy({ id });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} status`;
+    return this.statusRepository.delete(id);
   }
 }

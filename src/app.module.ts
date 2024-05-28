@@ -20,6 +20,7 @@ import { EvidencesModule } from './evidences/evidences.module';
 import { TasksModule } from './tasks/tasks.module';
 import { StatusesModule } from './statuses/statuses.module';
 import { BackgroundsModule } from './backgrounds/backgrounds.module';
+import { PriorityLevelsModule } from './priority-levels/priority-levels.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { BackgroundsModule } from './backgrounds/backgrounds.module';
     TasksModule,
     StatusesModule,
     BackgroundsModule,
+    PriorityLevelsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

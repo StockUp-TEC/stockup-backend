@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
 import { TasksService } from './tasks.service';
 import { Task } from './entities/task.entity';
 import { CreateTaskInput } from './dto/create-task.input';
@@ -13,19 +13,18 @@ export class TasksResolver {
     return this.tasksService.create(createTaskInput);
   }
 
-  @Query(() => [Task], { name: 'tasks' })
-  findAll() {
-    return this.tasksService.findAll();
-  }
-
   @Query(() => Task, { name: 'task' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.tasksService.findOne(id);
   }
 
   @Mutation(() => Task)
-  updateTask(@Args('updateTaskInput') updateTaskInput: UpdateTaskInput) {
-    return this.tasksService.update(updateTaskInput.id, updateTaskInput);
+  updateTask(
+    @Context() context,
+    @Args('updateTaskInput') updateTaskInput: UpdateTaskInput,
+  ) {
+    const authId = context.req.user.sub;
+    return this.tasksService.update(authId, updateTaskInput);
   }
 
   @Mutation(() => Task)
