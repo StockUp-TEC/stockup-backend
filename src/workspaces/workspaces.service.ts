@@ -46,12 +46,10 @@ export class WorkspacesService {
 
   async findOne(id: number, info: GraphQLResolveInfo) {
     const relations = this.getRelations(info);
-    console.log('Getting workspace');
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
       relations,
     });
-    console.log('Got workspace');
     if (!workspace) {
       throw new Error('Workspace not found');
     }
@@ -75,7 +73,8 @@ export class WorkspacesService {
 
     if (fields.divisions) relations.push('divisions');
     if (fields.users) relations.push('users');
-    if (fields.users.role) relations.push('users.userWorkspaces');
+    if (fields.users && fields.users.role)
+      relations.push('users.userWorkspaces');
     if (fields.companies) relations.push('companies');
     if (fields.statuses) relations.push('statuses');
 
