@@ -7,8 +7,8 @@ export class StatusesResolver {
   constructor(private readonly statusesService: StatusesService) {}
 
   @Query(() => [Status], { name: 'statuses' })
-  findAll() {
-    return this.statusesService.findAll();
+  findAll(@Args('workspaceId', { type: () => Int }) workspaceId: number) {
+    return this.statusesService.findAll(workspaceId);
   }
 
   @Query(() => Status, { name: 'status' })

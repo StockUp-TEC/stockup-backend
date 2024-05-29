@@ -4,9 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
+import { Task } from '../../tasks/entities/task.entity';
 
 @Entity({ name: 'STATUS' })
 @ObjectType()
@@ -26,7 +28,11 @@ export class Status {
   @Column({ name: 'WORKSPACE_ID' })
   workspaceId: number;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.statuses)
+  @ManyToOne(() => Workspace)
   @JoinColumn({ name: 'WORKSPACE_ID' })
   workspace: Workspace;
+
+  @OneToMany(() => Task, (task) => task.status)
+  @Field(() => [Task])
+  tasks: Task[];
 }

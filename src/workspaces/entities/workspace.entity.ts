@@ -51,8 +51,4 @@ export class Workspace {
 
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.workspace)
   userWorkspaces: UserWorkspace[];
-
-  @OneToMany(() => Status, (status) => status.workspace)
-  @Field(() => [Status])
-  statuses: Status[];
 }

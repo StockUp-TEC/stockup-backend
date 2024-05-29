@@ -16,12 +16,22 @@ export class StatusesService {
     return 'This action adds a new status';
   }
 
-  findAll() {
-    return this.statusRepository.find();
+  findAll(workspaceId: number) {
+    return this.statusRepository.find({
+      where: { workspaceId },
+      relations: {
+        tasks: true,
+      },
+    });
   }
 
   async findOne(id: number) {
-    const status = await this.statusRepository.findOneBy({ id });
+    const status = await this.statusRepository.findOne({
+      where: { id },
+      relations: {
+        tasks: true,
+      },
+    });
     if (!status) {
       throw new Error('Status not found');
     }

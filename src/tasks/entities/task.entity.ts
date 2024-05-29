@@ -61,7 +61,7 @@ export class Task {
   @JoinColumn({ name: 'PROJECT_ID' })
   project: Project;
 
-  @ManyToOne(() => Status, { eager: true })
+  @ManyToOne(() => Status, (status) => status.tasks, { eager: true })
   @JoinColumn({ name: 'STATUS_ID' })
   @Field(() => Status)
   status: Status;
