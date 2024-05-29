@@ -30,8 +30,13 @@ export class TasksService {
     await this.userService.findOne(createTaskInput.assignedId);
     // Verify project exists
     await this.projectService.findOne(createTaskInput.projectId);
-    // Verify status exists
-    await this.statusService.findOne(createTaskInput.statusId);
+    // Verify status exists in the project's workspace
+    const statuses = await this.statusService.findAllForProject(
+      createTaskInput.projectId,
+    );
+    if (!statuses.find((status) => status.id === createTaskInput.statusId)) {
+      throw new Error('Status not found in project workspace');
+    }
     // Verify priority exists
     if (createTaskInput.priorityId)
       await this.priorityService.findOne(createTaskInput.priorityId);
