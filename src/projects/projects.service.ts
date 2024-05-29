@@ -46,7 +46,15 @@ export class ProjectsService {
   }
 
   async findOne(id: number) {
-    const project = await this.projectRepository.findOneBy({ id });
+    const project = await this.projectRepository.findOne({
+      where: { id },
+      relations: {
+        users: true,
+        background: true,
+        history: true,
+        division: true,
+      },
+    });
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found.`);
     }

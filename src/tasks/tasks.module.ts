@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { TasksResolver } from './tasks.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,9 +14,10 @@ import { PriorityLevelsModule } from '../priority-levels/priority-levels.module'
     TypeOrmModule.forFeature([Task, TaskHistory]),
     UsersModule,
     ProjectsModule,
-    StatusesModule,
+    forwardRef(() => StatusesModule),
     PriorityLevelsModule,
   ],
   providers: [TasksResolver, TasksService],
+  exports: [TasksService],
 })
 export class TasksModule {}

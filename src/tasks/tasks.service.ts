@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from './entities/task.entity';
@@ -19,6 +19,7 @@ export class TasksService {
     private taskHistoryRepository: Repository<TaskHistory>,
     private readonly userService: UsersService,
     private readonly projectService: ProjectsService,
+    @Inject(forwardRef(() => StatusesService))
     private readonly statusService: StatusesService,
     private readonly priorityService: PriorityLevelsService,
   ) {}
@@ -44,6 +45,10 @@ export class TasksService {
 
   findOne(id: number) {
     return this.taskRepository.findOneBy({ id });
+  }
+
+  findAllForProject(projectId: number) {
+    return this.taskRepository.find({ where: { projectId } });
   }
 
   async update(authId: string, updateTaskInput: UpdateTaskInput) {
