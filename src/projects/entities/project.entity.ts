@@ -58,7 +58,7 @@ export class Project {
   @Field(() => [User], { name: 'users' })
   users: User[];
 
-  @OneToMany(() => Task, (task) => task.project, { eager: true, cascade: true })
+  @OneToMany(() => Task, (task) => task.project, { eager: true })
   @Field(() => [Task], { defaultValue: [] })
   tasks: Task[];
 
@@ -71,6 +71,6 @@ export class Project {
 
   @ManyToOne(() => Background, { eager: true })
   @JoinColumn({ name: 'BACKGROUND_ID' })
-  @Field(() => Background)
+  @Field(() => Background, { nullable: true })
   background: Background;
 }
