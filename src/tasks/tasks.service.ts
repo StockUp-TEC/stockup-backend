@@ -27,7 +27,21 @@ export class TasksService {
   async create(authId: string, createTaskInput: CreateTaskInput) {
     const currentUser = await this.userService.me(authId);
     // Verify assigned user exists
-    await this.userService.findOne(createTaskInput.assignedId);
+    if (createTaskInput.assignedId) {
+      await this.userService.findOne(createTaskInput.assignedId);
+    }
+    if (createTaskInput.parentTaskId) {
+      const parent = await this.findOne(createTaskInput.parentTaskId);
+      if (!parent) {
+        throw new Error(
+          `Parent task with id ${createTaskInput.parentTaskId} not found`,
+        );
+      }
+      if (parent.projectId !== createTaskInput.projectId) {
+        throw new Error('Parent task must belong to the same project');
+      }
+    }
+
     // Verify project exists
     await this.projectService.findOne(createTaskInput.projectId);
     // Verify status exists in the project's workspace
@@ -49,11 +63,25 @@ export class TasksService {
   }
 
   findOne(id: number) {
-    return this.taskRepository.findOneBy({ id });
+    return this.taskRepository.findOne({
+      where: { id },
+      relations: {
+        subTasks: {
+          subTasks: true,
+        },
+      },
+    });
   }
 
   findAllForProject(projectId: number) {
-    return this.taskRepository.find({ where: { projectId } });
+    return this.taskRepository.find({
+      where: { projectId },
+      relations: {
+        subTasks: {
+          subTasks: true,
+        },
+      },
+    });
   }
 
   async update(authId: string, updateTaskInput: UpdateTaskInput) {

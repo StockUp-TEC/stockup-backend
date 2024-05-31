@@ -25,4 +25,7 @@ export class CreateTaskInput {
 
   @Field(() => Int, { nullable: true })
   priorityId: number;
+
+  @Field(() => Int, { nullable: true })
+  parentTaskId: number;
 }
