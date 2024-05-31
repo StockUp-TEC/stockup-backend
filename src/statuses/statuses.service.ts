@@ -109,7 +109,10 @@ export class StatusesService {
     return status;
   }
 
-  async update(id: number, updateStatusDto: UpdateStatusInput) {
+  async update(
+    id: number,
+    updateStatusDto: UpdateStatusInput,
+  ): Promise<boolean> {
     const status = await this.statusRepository.findOne({
       where: { id },
       relations: {
@@ -124,50 +127,46 @@ export class StatusesService {
     if (name) status.name = name;
     if (color) status.color = color;
 
-    if (nextStatusId !== undefined) {
-      if (nextStatusId === null) {
-        // Handle unlinking the current status from its next status
-        if (status.nextStatus) {
-          const nextStatus = status.nextStatus;
-          status.nextStatus = null;
-          await this.statusRepository.save(status);
+    if (nextStatusId !== undefined && nextStatusId !== status.nextStatus?.id) {
+      // Unlink the current status from the linked list if necessary
+      const currentNextStatus = status.nextStatus;
+      if (currentNextStatus) {
+        const previousStatus = await this.statusRepository.findOne({
+          where: { nextStatus: status },
+        });
 
-          const previousStatus = await this.statusRepository.findOne({
-            where: { nextStatusId: status.id },
-          });
-
-          if (previousStatus) {
-            previousStatus.nextStatus = nextStatus;
-            await this.statusRepository.save(previousStatus);
-          }
+        if (previousStatus) {
+          previousStatus.nextStatus = currentNextStatus;
+          await this.statusRepository.save(previousStatus);
         }
+      }
+
+      // Link the status to the new next status
+      if (nextStatusId === null) {
+        status.nextStatus = null;
       } else {
-        // Link the status to a new next status
-        const newNextStatus = await this.statusRepository.findOneBy({
-          id: nextStatusId,
+        const newNextStatus = await this.statusRepository.findOne({
+          where: { id: nextStatusId },
         });
         if (!newNextStatus) {
           throw new Error(`Next status with ID ${nextStatusId} not found`);
         }
 
-        if (status.nextStatus) {
-          const previousNextStatus = status.nextStatus;
-
-          // Update the previous status of the current next status
-          const previousStatus = await this.statusRepository.findOne({
-            where: { nextStatus: status },
-          });
-
-          if (previousStatus) {
-            previousStatus.nextStatus = previousNextStatus;
-            await this.statusRepository.save(previousStatus);
-          }
-        }
-
         status.nextStatus = newNextStatus;
-        await this.statusRepository.save(status);
+
+        // Update the previous status of the new next status to point to this status
+        const previousStatus = await this.statusRepository.findOne({
+          where: { nextStatus: newNextStatus },
+        });
+
+        if (previousStatus) {
+          previousStatus.nextStatus = status;
+          await this.statusRepository.save(previousStatus);
+        }
       }
     }
+
+    await this.statusRepository.save(status);
     return true;
   }
 

@@ -1,8 +1,7 @@
-import { CreateStatusInput } from './create-status.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateStatusInput extends PartialType(CreateStatusInput) {
+export class UpdateStatusInput {
   @Field({ nullable: true })
   name: string;
 
