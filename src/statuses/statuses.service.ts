@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateStatusInput } from './dto/create-status.input';
 import { Status } from './entities/status.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { ProjectsService } from '../projects/projects.service';
 import { TasksService } from '../tasks/tasks.service';
 import { UpdateStatusInput } from './dto/update-status.input';
@@ -143,10 +143,13 @@ export class StatusesService {
 
       // Link the status to the new next status
       if (nextStatusId === null) {
-        status.nextStatus = null;
         const previousLastStatus = await this.statusRepository.findOne({
-          where: { nextStatus: null },
+          where: {
+            workspaceId: status.workspaceId,
+            nextStatus: IsNull(),
+          },
         });
+        status.nextStatus = null;
         await this.statusRepository.update(previousLastStatus.id, {
           nextStatusId: status.id,
         });
