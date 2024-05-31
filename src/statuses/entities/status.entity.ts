@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
@@ -33,6 +34,13 @@ export class Status {
   workspace: Workspace;
 
   @OneToMany(() => Task, (task) => task.status)
-  @Field(() => [Task])
+  @Field(() => [Task], { defaultValue: [] })
   tasks: Task[];
+
+  @OneToOne(() => Status, (status) => status.nextStatus)
+  @JoinColumn({ name: 'NEXT_STATUS_ID' })
+  nextStatus: Status;
+
+  @Field(() => Int, { nullable: true })
+  index?: number;
 }
