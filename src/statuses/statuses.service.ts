@@ -144,6 +144,12 @@ export class StatusesService {
       // Link the status to the new next status
       if (nextStatusId === null) {
         status.nextStatus = null;
+        const previousLastStatus = await this.statusRepository.findOne({
+          where: { nextStatus: null },
+        });
+        await this.statusRepository.update(previousLastStatus.id, {
+          nextStatusId: status.id,
+        });
       } else {
         const newNextStatus = await this.statusRepository.findOne({
           where: { id: nextStatusId },
