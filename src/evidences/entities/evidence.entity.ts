@@ -3,8 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
@@ -30,8 +32,12 @@ export class Evidence {
   createdAt: Date;
 
   @Column({ name: 'CREATED_BY' })
-  @Field(() => Int)
   createdBy: number;
+
+  @ManyToOne(() => User, { eager: true })
+  @JoinColumn({ name: 'CREATED_BY' })
+  @Field(() => User)
+  createdByUser: User;
 
   @ManyToMany(() => User, { eager: true })
   @JoinTable({
