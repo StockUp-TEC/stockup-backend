@@ -3,12 +3,12 @@ import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateStatusInput extends PartialType(CreateStatusInput) {
-  @Field()
+  @Field({ nullable: true })
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   color: string;
 
-  @Field()
+  @Field(() => Int, { nullable: true })
   nextStatusId: number;
 }

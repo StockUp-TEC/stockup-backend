@@ -15,7 +15,7 @@ export class StatusesResolver {
     return this.statusesService.create(createStatusInput);
   }
 
-  @Mutation(() => Status)
+  @Mutation(() => Boolean)
   updateStatus(
     @Args('id', { type: () => Int }) id: number,
     @Args('updateStatusInput') updateStatusInput: UpdateStatusInput,
