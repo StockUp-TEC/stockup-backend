@@ -72,7 +72,7 @@ export class WorkspacesService {
     const relations = [];
 
     if (fields.divisions) relations.push('divisions');
-    if (fields.divisions && fields.divisions.users) {
+    if (fields.divisions || fields.divisions.users) {
       relations.push('divisions.userDivisions');
       relations.push('divisions.projects.tasks');
       relations.push('divisions.projects.background');
