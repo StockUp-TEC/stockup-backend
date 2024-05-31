@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProjectsService } from '../projects/projects.service';
 import { TasksService } from '../tasks/tasks.service';
+import { UpdateStatusInput } from './dto/update-status.input';
 
 @Injectable()
 export class StatusesService {
@@ -16,11 +17,39 @@ export class StatusesService {
     private readonly tasksService: TasksService,
   ) {}
 
-  create(createStatusInput: CreateStatusInput) {
-    return 'This action adds a new status';
+  async create(createStatusDto: CreateStatusInput): Promise<Status> {
+    const { name, color, workspaceId, nextStatusId } = createStatusDto;
+    const status = this.statusRepository.create({ name, color, workspaceId });
+
+    if (nextStatusId) {
+      // Fetch the next status
+      const nextStatus = await this.statusRepository.findOne({
+        where: { id: nextStatusId },
+        relations: {
+          nextStatus: true,
+        },
+      });
+      if (!nextStatus) {
+        throw new Error('Next status not found');
+      }
+
+      // Insert the new status before the nextStatus
+      status.nextStatus = nextStatus;
+
+      // Find the previous status that should now point to the new status
+      const previousStatus = await this.statusRepository.findOne({
+        where: { nextStatus: nextStatus },
+      });
+
+      if (previousStatus) {
+        previousStatus.nextStatus = status;
+        await this.statusRepository.save(previousStatus);
+      }
+    }
+
+    return this.statusRepository.save(status);
   }
 
-  a;
   async findAllForProject(projectId: number): Promise<Status[]> {
     // Fetch project and workspaceId as before
     const project = await this.projectsService.findOne(projectId);
@@ -78,6 +107,67 @@ export class StatusesService {
       throw new Error('Status not found');
     }
     return status;
+  }
+
+  async update(id: number, updateStatusDto: UpdateStatusInput) {
+    const status = await this.statusRepository.findOne({
+      where: { id },
+      relations: {
+        nextStatus: true,
+      },
+    });
+    if (!status) {
+      throw new Error(`Status with ID ${id} not found`);
+    }
+
+    const { name, color, nextStatusId } = updateStatusDto;
+    if (name) status.name = name;
+    if (color) status.color = color;
+
+    if (nextStatusId !== undefined) {
+      if (nextStatusId === null) {
+        // Handle unlinking the current status from its next status
+        if (status.nextStatus) {
+          const nextStatus = status.nextStatus;
+          status.nextStatus = null;
+          await this.statusRepository.save(status);
+
+          const previousStatus = await this.statusRepository.findOne({
+            where: { nextStatusId: status.id },
+          });
+
+          if (previousStatus) {
+            previousStatus.nextStatus = nextStatus;
+            await this.statusRepository.save(previousStatus);
+          }
+        }
+      } else {
+        // Link the status to a new next status
+        const newNextStatus = await this.statusRepository.findOneBy({
+          id: nextStatusId,
+        });
+        if (!newNextStatus) {
+          throw new Error(`Next status with ID ${nextStatusId} not found`);
+        }
+
+        if (status.nextStatus) {
+          const previousNextStatus = status.nextStatus;
+
+          // Update the previous status of the current next status
+          const previousStatus = await this.statusRepository.findOne({
+            where: { nextStatus: status },
+          });
+
+          if (previousStatus) {
+            previousStatus.nextStatus = previousNextStatus;
+            await this.statusRepository.save(previousStatus);
+          }
+        }
+
+        status.nextStatus = newNextStatus;
+        await this.statusRepository.save(status);
+      }
+    }
   }
 
   remove(id: number) {

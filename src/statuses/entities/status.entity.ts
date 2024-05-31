@@ -29,6 +29,9 @@ export class Status {
   @Column({ name: 'WORKSPACE_ID' })
   workspaceId: number;
 
+  @Column({ name: 'NEXT_STATUS_ID', nullable: true })
+  nextStatusId: number;
+
   @ManyToOne(() => Workspace)
   @JoinColumn({ name: 'WORKSPACE_ID' })
   workspace: Workspace;
