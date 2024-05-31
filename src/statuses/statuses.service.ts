@@ -47,7 +47,7 @@ export class StatusesService {
       }
     }
 
-    return this.statusRepository.save(status);
+    return await this.statusRepository.save(status);
   }
 
   async findAllForProject(projectId: number): Promise<Status[]> {
@@ -168,6 +168,7 @@ export class StatusesService {
         await this.statusRepository.save(status);
       }
     }
+    return true;
   }
 
   remove(id: number) {
