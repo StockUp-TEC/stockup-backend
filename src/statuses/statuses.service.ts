@@ -136,6 +136,9 @@ export class StatusesService {
           nextStatusId !== undefined &&
           nextStatusId !== status.nextStatus?.id
         ) {
+          if (nextStatusId === id) {
+            throw new Error('A status cannot point to itself');
+          }
           // Handle the unlinking of the current next status
           if (status.nextStatus) {
             if (previousStatus) {
