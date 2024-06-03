@@ -109,10 +109,7 @@ export class StatusesService {
     return status;
   }
 
-  async update(
-    id: number,
-    updateStatusDto: UpdateStatusInput,
-  ): Promise<boolean> {
+  async update(id: number, updateStatusDto: UpdateStatusInput) {
     return await this.statusRepository.manager.transaction(
       async (entityManager: EntityManager) => {
         const status = await entityManager.findOne(Status, {
@@ -128,19 +125,30 @@ export class StatusesService {
         if (name) status.name = name;
         if (color) status.color = color;
 
-        const previousStatus = await entityManager.findOne(Status, {
-          where: { nextStatus: status },
-        });
-
         if (
           nextStatusId !== undefined &&
           nextStatusId !== status.nextStatus?.id
         ) {
-          if (nextStatusId === id) {
-            throw new Error('A status cannot point to itself');
+          // Check for circular dependency
+          let current = await entityManager.findOne(Status, {
+            where: { id: nextStatusId },
+          });
+          while (current) {
+            if (current.id === id) {
+              throw new Error(
+                `Setting status with ID ${id} as nextStatusId would create a circular dependency`,
+              );
+            }
+            current = await entityManager.findOne(Status, {
+              where: { id: current.nextStatusId },
+            });
           }
+
           // Handle the unlinking of the current next status
           if (status.nextStatus) {
+            const previousStatus = await entityManager.findOne(Status, {
+              where: { nextStatus: status },
+            });
             if (previousStatus) {
               previousStatus.nextStatus = status.nextStatus;
               await entityManager.save(previousStatus);
@@ -183,6 +191,9 @@ export class StatusesService {
             if (previousStatusOfNewNextStatus) {
               previousStatusOfNewNextStatus.nextStatus = status;
               await entityManager.save(previousStatusOfNewNextStatus);
+            } else {
+              newNextStatus.nextStatus = status;
+              await entityManager.save(newNextStatus);
             }
           }
         }
