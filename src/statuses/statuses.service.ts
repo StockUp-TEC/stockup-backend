@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateStatusInput } from './dto/create-status.input';
 import { Status } from './entities/status.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { EntityManager, IsNull, Repository } from 'typeorm';
 import { ProjectsService } from '../projects/projects.service';
 import { TasksService } from '../tasks/tasks.service';
 import { UpdateStatusInput } from './dto/update-status.input';
@@ -113,70 +113,82 @@ export class StatusesService {
     id: number,
     updateStatusDto: UpdateStatusInput,
   ): Promise<boolean> {
-    const status = await this.statusRepository.findOne({
-      where: { id },
-      relations: {
-        nextStatus: true,
-      },
-    });
-    if (!status) {
-      throw new Error(`Status with ID ${id} not found`);
-    }
+    return await this.statusRepository.manager.transaction(
+      async (entityManager: EntityManager) => {
+        const status = await entityManager.findOne(Status, {
+          where: { id },
+          relations: ['nextStatus'],
+        });
 
-    const { name, color, nextStatusId } = updateStatusDto;
-    if (name) status.name = name;
-    if (color) status.color = color;
+        if (!status) {
+          throw new Error(`Status with ID ${id} not found`);
+        }
 
-    if (nextStatusId !== undefined && nextStatusId !== status.nextStatus?.id) {
-      // Unlink the current status from the linked list if necessary
-      const currentNextStatus = status.nextStatus;
-      if (currentNextStatus) {
-        const previousStatus = await this.statusRepository.findOne({
+        const { name, color, nextStatusId } = updateStatusDto;
+        if (name) status.name = name;
+        if (color) status.color = color;
+
+        const previousStatus = await entityManager.findOne(Status, {
           where: { nextStatus: status },
         });
 
-        if (previousStatus) {
-          previousStatus.nextStatus = currentNextStatus;
-          await this.statusRepository.save(previousStatus);
+        if (
+          nextStatusId !== undefined &&
+          nextStatusId !== status.nextStatus?.id
+        ) {
+          // Handle the unlinking of the current next status
+          if (status.nextStatus) {
+            if (previousStatus) {
+              previousStatus.nextStatus = status.nextStatus;
+              await entityManager.save(previousStatus);
+            }
+          }
+
+          // Handle the new next status link
+          if (nextStatusId === null) {
+            const previousLastStatus = await entityManager.findOne(Status, {
+              where: {
+                workspaceId: status.workspaceId,
+                nextStatus: IsNull(),
+              },
+            });
+
+            if (previousLastStatus) {
+              previousLastStatus.nextStatus = status;
+              await entityManager.save(previousLastStatus);
+            }
+
+            status.nextStatus = null;
+          } else {
+            const newNextStatus = await entityManager.findOne(Status, {
+              where: { id: nextStatusId },
+            });
+
+            if (!newNextStatus) {
+              throw new Error(`Next status with ID ${nextStatusId} not found`);
+            }
+
+            status.nextStatus = newNextStatus;
+
+            const previousStatusOfNewNextStatus = await entityManager.findOne(
+              Status,
+              {
+                where: { nextStatus: newNextStatus },
+              },
+            );
+
+            if (previousStatusOfNewNextStatus) {
+              previousStatusOfNewNextStatus.nextStatus = status;
+              await entityManager.save(previousStatusOfNewNextStatus);
+            }
+          }
         }
-      }
 
-      // Link the status to the new next status
-      if (nextStatusId === null) {
-        const previousLastStatus = await this.statusRepository.findOne({
-          where: {
-            workspaceId: status.workspaceId,
-            nextStatus: IsNull(),
-          },
-        });
-        status.nextStatus = null;
-        await this.statusRepository.update(previousLastStatus.id, {
-          nextStatusId: status.id,
-        });
-      } else {
-        const newNextStatus = await this.statusRepository.findOne({
-          where: { id: nextStatusId },
-        });
-        if (!newNextStatus) {
-          throw new Error(`Next status with ID ${nextStatusId} not found`);
-        }
+        await entityManager.save(status);
 
-        status.nextStatus = newNextStatus;
-
-        // Update the previous status of the new next status to point to this status
-        const previousStatus = await this.statusRepository.findOne({
-          where: { nextStatus: newNextStatus },
-        });
-
-        if (previousStatus) {
-          previousStatus.nextStatus = status;
-          await this.statusRepository.save(previousStatus);
-        }
-      }
-    }
-
-    await this.statusRepository.save(status);
-    return true;
+        return true;
+      },
+    );
   }
 
   remove(id: number) {
