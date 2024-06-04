@@ -109,97 +109,76 @@ export class StatusesService {
     return status;
   }
 
-  async update(id: number, updateStatusDto: UpdateStatusInput) {
+  async update(
+    updateStatusId: number,
+    updateStatusInput: UpdateStatusInput,
+  ): Promise<boolean> {
     return await this.statusRepository.manager.transaction(
       async (entityManager: EntityManager) => {
         const status = await entityManager.findOne(Status, {
-          where: { id },
-          relations: ['nextStatus'],
+          where: { id: updateStatusId },
         });
 
         if (!status) {
-          throw new Error(`Status with ID ${id} not found`);
+          throw new Error(`Status with ID ${updateStatusId} not found`);
         }
 
-        const { name, color, nextStatusId } = updateStatusDto;
+        const { name, color, nextStatusId } = updateStatusInput;
         if (name) status.name = name;
         if (color) status.color = color;
 
         if (
           nextStatusId !== undefined &&
-          nextStatusId !== status.nextStatus?.id
+          nextStatusId !== status.nextStatusId
         ) {
-          // Check for circular dependency
-          let current = await entityManager.findOne(Status, {
-            where: { id: nextStatusId },
+          if (nextStatusId === status.id) {
+            throw new Error('Status cannot be its own next status');
+          }
+
+          const previousPreviousStatus = await entityManager.findOne(Status, {
+            where: { nextStatusId: status.id },
           });
-          while (current) {
-            if (current.id === id) {
-              throw new Error(
-                `Setting status with ID ${id} as nextStatusId would create a circular dependency`,
-              );
-            }
-            current = await entityManager.findOne(Status, {
-              where: { id: current.nextStatusId },
+          if (previousPreviousStatus) {
+            previousPreviousStatus.nextStatusId = status.nextStatusId;
+            await entityManager.update(Status, previousPreviousStatus.id, {
+              nextStatusId: status.nextStatusId,
             });
           }
 
-          // Handle the unlinking of the current next status
-          if (status.nextStatus) {
-            const previousStatus = await entityManager.findOne(Status, {
-              where: { nextStatus: status },
+          const previousStatusPointingToNextStatus =
+            await entityManager.findOne(Status, {
+              where: { nextStatusId: nextStatusId },
             });
-            if (previousStatus) {
-              previousStatus.nextStatus = status.nextStatus;
-              await entityManager.save(previousStatus);
-            }
-          }
-
-          // Handle the new next status link
-          if (nextStatusId === null) {
-            const previousLastStatus = await entityManager.findOne(Status, {
-              where: {
-                workspaceId: status.workspaceId,
-                nextStatus: IsNull(),
-              },
-            });
-
-            if (previousLastStatus) {
-              previousLastStatus.nextStatus = status;
-              await entityManager.save(previousLastStatus);
-            }
-
-            status.nextStatus = null;
-          } else {
-            const newNextStatus = await entityManager.findOne(Status, {
-              where: { id: nextStatusId },
-            });
-
-            if (!newNextStatus) {
-              throw new Error(`Next status with ID ${nextStatusId} not found`);
-            }
-
-            status.nextStatus = newNextStatus;
-
-            const previousStatusOfNewNextStatus = await entityManager.findOne(
+          if (previousStatusPointingToNextStatus) {
+            previousStatusPointingToNextStatus.nextStatusId = status.id;
+            await entityManager.update(
               Status,
+              previousStatusPointingToNextStatus.id,
               {
-                where: { nextStatus: newNextStatus },
+                nextStatusId: status.id,
               },
             );
+          }
 
-            if (previousStatusOfNewNextStatus) {
-              previousStatusOfNewNextStatus.nextStatus = status;
-              await entityManager.save(previousStatusOfNewNextStatus);
-            } else {
-              newNextStatus.nextStatus = status;
-              await entityManager.save(newNextStatus);
+          if (nextStatusId === null) {
+            status.nextStatusId = null;
+            const previousLastStatus = await entityManager.findOne(Status, {
+              where: { nextStatusId: IsNull() },
+            });
+            if (previousLastStatus) {
+              previousLastStatus.nextStatusId = status.id;
+              await entityManager.update(Status, previousLastStatus.id, {
+                nextStatusId: status.id,
+              });
             }
           }
         }
 
-        await entityManager.save(status);
-
+        await entityManager.update(Status, status.id, {
+          name: status.name,
+          color: status.color,
+          nextStatusId: nextStatusId,
+        });
         return true;
       },
     );
