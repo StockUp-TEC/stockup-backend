@@ -47,6 +47,7 @@ export class Project {
 
   @ManyToOne(() => Division, (division) => division.projects)
   @JoinColumn({ name: 'DIVISION_ID' })
+  @Field(() => Division)
   division: Division;
 
   @ManyToMany(() => User, { eager: true })
