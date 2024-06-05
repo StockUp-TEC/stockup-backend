@@ -58,6 +58,7 @@ export class ProjectsService {
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found.`);
     }
+    project.tasks = project.tasks.filter((task) => !task.parentTaskId);
     return project;
   }
 

@@ -146,4 +146,10 @@ export class TasksService {
     }
     return true;
   }
+
+  async findSubTasks(parentTaskId: number) {
+    return this.taskRepository.find({
+      where: { parentTaskId },
+    });
+  }
 }

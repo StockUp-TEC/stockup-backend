@@ -8,9 +8,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Tree,
-  TreeChildren,
-  TreeParent,
 } from 'typeorm';
 import { Project } from '../../projects/entities/project.entity';
 import { Status } from '../../statuses/entities/status.entity';
@@ -20,7 +17,6 @@ import { TaskHistory } from './task-history.entity';
 
 @Entity({ name: 'TASK' })
 @ObjectType()
-@Tree('closure-table')
 export class Task {
   @PrimaryGeneratedColumn({ name: 'ID' })
   @Field()
@@ -94,11 +90,11 @@ export class Task {
   @JoinColumn({ name: 'CREATED_BY' })
   createdByUser: User;
 
-  @TreeParent()
+  @ManyToOne(() => Task, (task) => task.subTasks, { nullable: true })
   @JoinColumn({ name: 'PARENT_TASK_ID' })
   parentTask: Task;
 
-  @TreeChildren()
+  @OneToMany(() => Task, (task) => task.parentTask)
   @Field(() => [Task], { defaultValue: [] })
   subTasks: Relation<Task[]>;
 }
