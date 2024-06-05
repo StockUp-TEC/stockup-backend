@@ -40,6 +40,18 @@ export class StatusesService {
         previousStatus.nextStatus = status;
         await this.statusRepository.save(previousStatus);
       }
+    } else {
+      // Find the last status
+      const lastStatus = await this.statusRepository.findOne({
+        where: { nextStatus: IsNull() },
+      });
+
+      if (lastStatus) {
+        lastStatus.nextStatusId = status.id;
+        await this.statusRepository.update(lastStatus.id, {
+          nextStatusId: status.id,
+        });
+      }
     }
 
     return await this.statusRepository.save(status);
