@@ -176,8 +176,12 @@ export class StatusesService {
     );
   }
 
-  remove(id: number) {
-    return this.statusRepository.delete(id);
+  async remove(id: number) {
+    const result = await this.statusRepository.delete(id);
+    if (result.affected === 0) {
+      throw new Error('Status not found');
+    }
+    return true;
   }
 
   async getIndex(id: number) {

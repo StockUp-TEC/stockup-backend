@@ -36,7 +36,7 @@ export class StatusesResolver {
     return this.statusesService.findOne(id);
   }
 
-  @Mutation(() => Status)
+  @Mutation(() => Boolean)
   removeStatus(@Args('id', { type: () => Int }) id: number) {
     return this.statusesService.remove(id);
   }
