@@ -13,7 +13,7 @@ import { PriorityLevelsModule } from '../priority-levels/priority-levels.module'
   imports: [
     TypeOrmModule.forFeature([Task, TaskHistory]),
     UsersModule,
-    ProjectsModule,
+    forwardRef(() => ProjectsModule),
     forwardRef(() => StatusesModule),
     PriorityLevelsModule,
   ],

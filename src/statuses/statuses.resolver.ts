@@ -23,11 +23,6 @@ export class StatusesResolver {
     return this.statusesService.update(id, updateStatusInput);
   }
 
-  @Query(() => [Status], { name: 'statuses' })
-  findAll(@Args('projectId', { type: () => Int }) projectId: number) {
-    return this.statusesService.findAllForProject(projectId);
-  }
-
   @Query(() => Status, { name: 'status' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.statusesService.findOne(id);

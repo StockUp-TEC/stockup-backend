@@ -15,6 +15,7 @@ import { Division } from '../../divisions/entities/division.entity';
 import { Task } from '../../tasks/entities/task.entity';
 import { ProjectHistory } from './project-history.entity';
 import { Background } from '../../backgrounds/entities/background.entity';
+import { Status } from '../../statuses/entities/status.entity';
 
 @Entity('PROJECT')
 @ObjectType()
@@ -74,4 +75,8 @@ export class Project {
   @JoinColumn({ name: 'BACKGROUND_ID' })
   @Field(() => Background, { nullable: true })
   background: Background;
+
+  @OneToMany(() => Status, (status) => status.project, { eager: true })
+  @Field(() => [Status], { defaultValue: [] })
+  statuses: Status[];
 }

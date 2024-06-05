@@ -3,8 +3,6 @@ import { CreateStatusInput } from './dto/create-status.input';
 import { Status } from './entities/status.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, IsNull, Repository } from 'typeorm';
-import { ProjectsService } from '../projects/projects.service';
-import { TasksService } from '../tasks/tasks.service';
 import { UpdateStatusInput } from './dto/update-status.input';
 
 @Injectable()
@@ -12,14 +10,11 @@ export class StatusesService {
   constructor(
     @InjectRepository(Status)
     private statusRepository: Repository<Status>,
-    private readonly projectsService: ProjectsService,
-    @Inject(forwardRef(() => TasksService))
-    private readonly tasksService: TasksService,
   ) {}
 
-  async create(createStatusDto: CreateStatusInput): Promise<Status> {
-    const { name, color, workspaceId, nextStatusId } = createStatusDto;
-    const status = this.statusRepository.create({ name, color, workspaceId });
+  async create(createStatusDto: CreateStatusInput) {
+    const { name, color, projectId, nextStatusId } = createStatusDto;
+    const status = this.statusRepository.create({ name, color, projectId });
 
     if (nextStatusId) {
       // Fetch the next status
@@ -50,50 +45,31 @@ export class StatusesService {
     return await this.statusRepository.save(status);
   }
 
-  async findAllForProject(projectId: number): Promise<Status[]> {
-    // Fetch project and workspaceId as before
-    const project = await this.projectsService.findOne(projectId);
-    const workspaceId = project.division.workspaceId;
+  async createBaseStatuses(projectId: number) {
+    // Transaction to ensure all statuses are created or none
+    return await this.statusRepository.manager.transaction(
+      async (entityManager: EntityManager) => {
+        const statuses = [
+          { name: 'To Do', color: '#FF0000' },
+          { name: 'In Progress', color: '#00FF00' },
+          { name: 'Done', color: '#0000FF' },
+        ];
 
-    // Fetch all statuses for the workspace
-    const statuses = await this.statusRepository.find({
-      where: { workspaceId },
-      relations: {
-        nextStatus: true,
+        let previousStatus: Status = null;
+        for (const status of statuses) {
+          const newStatus = entityManager.create(Status, {
+            ...status,
+            projectId,
+          });
+          if (previousStatus) {
+            newStatus.nextStatus = previousStatus;
+          }
+          previousStatus = newStatus;
+          await entityManager.save(newStatus);
+        }
+        return true;
       },
-    });
-
-    // Fetch all tasks for the project
-    const tasks = await this.tasksService.findAllForProject(projectId);
-
-    // Assign tasks to statuses
-    statuses.forEach((status) => {
-      status.tasks = tasks.filter((task) => task.statusId === status.id);
-    });
-
-    // Create a map of status IDs to statuses
-    const statusMap = new Map<number, Status>();
-    statuses.forEach((status) => statusMap.set(status.id, status));
-
-    // Find the starting point of the linked list
-    let currentStatus = statuses.find(
-      (status) =>
-        !statuses.some((s) => s.nextStatus && s.nextStatus.id === status.id),
     );
-
-    // Traverse the linked list and assign the index
-    let index = 0;
-    const orderedStatuses: Status[] = [];
-    while (currentStatus) {
-      currentStatus.index = index;
-      orderedStatuses.push(currentStatus);
-      currentStatus = currentStatus.nextStatus
-        ? statusMap.get(currentStatus.nextStatus.id)
-        : null;
-      index++;
-    }
-
-    return orderedStatuses;
   }
 
   async findOne(id: number) {

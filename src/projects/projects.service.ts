@@ -8,6 +8,7 @@ import { UsersService } from '../users/users.service';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { ProjectHistory } from './entities/project-history.entity';
 import { BackgroundsService } from '../backgrounds/backgrounds.service';
+import { StatusesService } from '../statuses/statuses.service';
 
 @Injectable()
 export class ProjectsService {
@@ -19,6 +20,7 @@ export class ProjectsService {
     private readonly userDivisionService: UserDivisionsService,
     private readonly usersService: UsersService,
     private readonly backgroundsService: BackgroundsService,
+    private readonly statusesService: StatusesService,
   ) {}
 
   async create(createProjectInput: CreateProjectInput, authId: string) {
@@ -42,6 +44,7 @@ export class ProjectsService {
 
     // Verify that the background exists
     await this.projectRepository.save(project);
+    await this.statusesService.createBaseStatuses(project.id);
     return this.projectRepository.findOneBy({ id: project.id });
   }
 

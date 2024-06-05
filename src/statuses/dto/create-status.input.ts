@@ -9,7 +9,7 @@ export class CreateStatusInput {
   color: string;
 
   @Field(() => Int)
-  workspaceId: number;
+  projectId: number;
 
   @Field(() => Int, { nullable: true })
   nextStatusId: number;

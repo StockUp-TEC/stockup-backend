@@ -8,8 +8,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Workspace } from '../../workspaces/entities/workspace.entity';
 import { Task } from '../../tasks/entities/task.entity';
+import { Project } from '../../projects/entities/project.entity';
 
 @Entity({ name: 'STATUS' })
 @ObjectType()
@@ -26,15 +26,15 @@ export class Status {
   @Field(() => String)
   color: string;
 
-  @Column({ name: 'WORKSPACE_ID' })
-  workspaceId: number;
+  @Column({ name: 'PROJECT_ID' })
+  projectId: number;
 
   @Column({ name: 'NEXT_STATUS_ID', nullable: true })
   nextStatusId: number;
 
-  @ManyToOne(() => Workspace)
-  @JoinColumn({ name: 'WORKSPACE_ID' })
-  workspace: Workspace;
+  @ManyToOne(() => Project, (project) => project.statuses)
+  @JoinColumn({ name: 'PROJECT_ID' })
+  project: Project;
 
   @OneToMany(() => Task, (task) => task.status)
   @Field(() => [Task], { defaultValue: [] })
