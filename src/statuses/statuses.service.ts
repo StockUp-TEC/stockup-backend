@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateStatusInput } from './dto/create-status.input';
 import { Status } from './entities/status.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +15,7 @@ export class StatusesService {
   async create(createStatusDto: CreateStatusInput) {
     const { name, color, projectId, nextStatusId } = createStatusDto;
     const status = this.statusRepository.create({ name, color, projectId });
+    let previousLastStatus = null;
 
     if (nextStatusId) {
       // Fetch the next status
@@ -47,14 +48,17 @@ export class StatusesService {
       });
 
       if (lastStatus) {
-        lastStatus.nextStatusId = status.id;
-        await this.statusRepository.update(lastStatus.id, {
-          nextStatusId: status.id,
-        });
+        previousLastStatus = lastStatus;
       }
     }
 
-    return await this.statusRepository.save(status);
+    const newStatus = await this.statusRepository.save(status);
+    if (previousLastStatus) {
+      await this.statusRepository.update(previousLastStatus.id, {
+        nextStatusId: newStatus.id,
+      });
+    }
+    return newStatus;
   }
 
   async createBaseStatuses(projectId: number) {
