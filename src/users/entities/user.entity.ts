@@ -10,6 +10,8 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { UserDivision } from '../../user-divisions/entities/user-division.entity';
 import { Company } from '../../companies/entities/company.entity';
 import { UserWorkspace } from '../../user-workspaces/entities/user-workspace.entity';
+import { Project } from '../../projects/entities/project.entity';
+import { Task } from '../../tasks/entities/task.entity';
 
 @Entity({ name: 'USER' })
 @ObjectType()
@@ -55,4 +57,10 @@ export class User {
 
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
   userWorkspaces: UserWorkspace[];
+
+  @ManyToMany(() => Project, (project) => project.users)
+  projects: Project[];
+
+  @OneToMany(() => Task, (task) => task.assignedUser)
+  tasks: Task[];
 }

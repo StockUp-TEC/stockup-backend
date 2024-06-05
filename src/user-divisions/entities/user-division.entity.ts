@@ -23,5 +23,6 @@ export class UserDivision {
 
   @ManyToOne(() => Division, (division) => division.userDivisions)
   @JoinColumn({ name: 'DIVISION_ID' })
+  @Field(() => Division)
   division: Division;
 }

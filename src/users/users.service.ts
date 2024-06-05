@@ -230,11 +230,34 @@ export class UsersService {
         workspaces: true,
         companies: true,
         userWorkspaces: true,
-        userDivisions: true,
+        userDivisions: {
+          division: true,
+        },
+        projects: true,
+        tasks: true,
       },
     });
     if (!user) {
       throw new Error('User not found');
+    }
+
+    for (const workspace of user.workspaces) {
+      const divisions = user.userDivisions.map(
+        (userDivision) => userDivision.division,
+      );
+      for (const division of divisions) {
+        division.projects = user.projects.filter(
+          (project) => project.divisionId === division.id,
+        );
+        for (const project of division.projects) {
+          project.tasks = user.tasks.filter(
+            (task) => task.projectId === project.id,
+          );
+        }
+      }
+      workspace.divisions = divisions.filter((division) => {
+        return division.workspaceId === workspace.id;
+      });
     }
 
     return user;

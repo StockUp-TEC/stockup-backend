@@ -70,7 +70,7 @@ export class Task {
   @Field(() => Status)
   status: Status;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, (user) => user.tasks, { eager: true })
   @JoinColumn({ name: 'ASSIGNED_ID' })
   @Field(() => User, { nullable: true })
   assignedUser: User;

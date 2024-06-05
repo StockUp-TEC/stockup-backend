@@ -50,11 +50,11 @@ export class Project {
   @Field(() => Division)
   division: Division;
 
-  @ManyToMany(() => User, { eager: true })
+  @ManyToMany(() => User, (user) => user.projects, { eager: true })
   @JoinTable({
     name: 'USER_PROJECT',
-    joinColumn: { name: 'PROJECT_ID' },
-    inverseJoinColumn: { name: 'USER_ID' },
+    joinColumn: { name: 'PROJECT_ID', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'USER_ID', referencedColumnName: 'id' },
   })
   @Field(() => [User], { name: 'users' })
   users: User[];
