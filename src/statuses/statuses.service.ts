@@ -175,4 +175,23 @@ export class StatusesService {
   remove(id: number) {
     return this.statusRepository.delete(id);
   }
+
+  async getIndex(id: number) {
+    const status = await this.statusRepository.findOne({
+      where: { id },
+      relations: {
+        project: true,
+      },
+    });
+    if (!status) {
+      throw new Error('Status not found');
+    }
+
+    const statuses = await this.statusRepository.find({
+      where: { projectId: status.project.id },
+      order: { id: 'ASC' },
+    });
+
+    return statuses.findIndex((s) => s.id === id);
+  }
 }

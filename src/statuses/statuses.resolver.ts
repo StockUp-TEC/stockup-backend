@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { StatusesService } from './statuses.service';
 import { Status } from './entities/status.entity';
 import { CreateStatusInput } from './dto/create-status.input';
@@ -31,5 +39,10 @@ export class StatusesResolver {
   @Mutation(() => Status)
   removeStatus(@Args('id', { type: () => Int }) id: number) {
     return this.statusesService.remove(id);
+  }
+
+  @ResolveField(() => Int, { name: 'index' })
+  async index(@Parent() { id }: Status) {
+    return this.statusesService.getIndex(id);
   }
 }
