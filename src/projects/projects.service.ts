@@ -56,6 +56,9 @@ export class ProjectsService {
         background: true,
         history: true,
         division: true,
+        statuses: {
+          tasks: true,
+        },
       },
     });
     if (!project) {
