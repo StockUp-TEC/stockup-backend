@@ -11,6 +11,8 @@ import { Company } from '../companies/entities/company.entity';
 import { MailersendService } from '../mailersend/mailersend.service';
 import { UserDivision } from '../user-divisions/entities/user-division.entity';
 import { UpdateUserRoleInput } from './dto/update-user-role.input';
+import { GraphQLResolveInfo } from 'graphql/type';
+import * as graphqlFields from 'graphql-fields';
 
 @Injectable()
 export class UsersService {
@@ -223,41 +225,61 @@ export class UsersService {
     return true;
   }
 
-  async me(authId: string) {
+  async me(authId: string, info?: GraphQLResolveInfo) {
+    const fields = info ? graphqlFields(info) : {};
+    const relations = this.getRelations(fields);
+
     const user = await this.userRepository.findOne({
       where: { authProviderId: authId },
-      relations: {
-        workspaces: true,
-        companies: true,
-        userWorkspaces: true,
-        userDivisions: {
-          division: true,
-        },
-        projects: true,
-        tasks: true,
-      },
+      relations: relations,
     });
     if (!user) {
       throw new Error('User not found');
     }
 
-    for (const workspace of user.workspaces) {
-      const divisions = user.userDivisions.map(
-        (userDivision) => userDivision.division,
-      );
-      for (const division of divisions) {
-        division.projects = user.projects.filter(
-          (project) => project.divisionId === division.id,
-        );
-        for (const project of division.projects) {
-          project.tasks = user.tasks.filter(
-            (task) => task.projectId === project.id,
+    if (fields.workspaces) {
+      for (const workspace of user.workspaces) {
+        const divisions = [];
+        if (fields.workspaces.divisions) {
+          const divisionMap = new Map(
+            user.userDivisions.map((ud) => [ud.division.id, ud.division]),
           );
+          const projectMap = new Map();
+          const taskMap = new Map();
+
+          if (fields.workspaces.divisions.projects) {
+            user.projects.forEach((project) => {
+              if (!projectMap.has(project.divisionId)) {
+                projectMap.set(project.divisionId, []);
+              }
+              projectMap.get(project.divisionId).push(project);
+            });
+
+            if (fields.workspaces.divisions.projects.tasks) {
+              user.tasks.forEach((task) => {
+                if (!taskMap.has(task.projectId)) {
+                  taskMap.set(task.projectId, []);
+                }
+                taskMap.get(task.projectId).push(task);
+              });
+            }
+          }
+
+          user.userDivisions.forEach((ud) => {
+            if (divisionMap.has(ud.division.id)) {
+              const division = divisionMap.get(ud.division.id);
+              division.projects = projectMap.get(division.id) || [];
+              division.projects.forEach((project) => {
+                project.tasks = taskMap.get(project.id) || [];
+              });
+              divisions.push(division);
+            }
+          });
         }
+        workspace.divisions = divisions.filter(
+          (division) => division.workspaceId === workspace.id,
+        );
       }
-      workspace.divisions = divisions.filter((division) => {
-        return division.workspaceId === workspace.id;
-      });
     }
 
     return user;
@@ -316,5 +338,30 @@ export class UsersService {
     }
 
     return true;
+  }
+
+  private getRelations(fields: any) {
+    const relations = [];
+
+    // Based on requested fields, push necessary relations
+    if (fields.workspaces) {
+      relations.push('workspaces');
+      if (fields.workspaces.divisions) {
+        relations.push('userDivisions.division');
+        if (fields.workspaces.divisions.projects) {
+          relations.push('projects');
+          if (fields.workspaces.divisions.projects.tasks) {
+            relations.push('tasks');
+          }
+        }
+      }
+    }
+    if (fields.companies) relations.push('companies');
+    if (fields.userWorkspaces) relations.push('userWorkspaces');
+    if (fields.userDivisions) relations.push('userDivisions.division');
+    if (fields.projects) relations.push('projects');
+    if (fields.tasks) relations.push('tasks');
+
+    return relations;
   }
 }

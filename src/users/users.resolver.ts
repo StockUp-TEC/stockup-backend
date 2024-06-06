@@ -1,6 +1,7 @@
 import {
   Args,
   Context,
+  Info,
   Int,
   Mutation,
   Parent,
@@ -15,6 +16,7 @@ import { Role } from '../roles/entities/role.entity';
 import { CreateSponsorInput } from './dto/create-sponsor.input';
 import { UpdateUserRoleInput } from './dto/update-user-role.input';
 import { IsPublic } from '../auth/public.decorator';
+import { GraphQLResolveInfo } from 'graphql/type';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -80,12 +82,12 @@ export class UsersResolver {
 
   // Get authenticated user
   @Query(() => User, { name: 'me' })
-  async me(@Context() context) {
+  async me(@Context() context, @Info() info: GraphQLResolveInfo) {
     const authId = context.req.user.sub;
     if (!authId) {
       throw new Error('User not found: no authId in context');
     }
-    return this.usersService.me(authId);
+    return this.usersService.me(authId, info);
   }
 
   @ResolveField(() => Role, { name: 'role', nullable: true })
