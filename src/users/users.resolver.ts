@@ -101,6 +101,9 @@ export class UsersResolver {
     const userWorkspace = user.userWorkspaces.find(
       (userWorkspace) => userWorkspace.workspaceId === workspaceId,
     );
+    if (!userWorkspace) {
+      return null;
+    }
     return userWorkspace.role;
   }
 }

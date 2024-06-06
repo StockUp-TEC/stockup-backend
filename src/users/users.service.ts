@@ -357,7 +357,7 @@ export class UsersService {
       }
     }
     if (fields.companies) relations.push('companies');
-    if (fields.userWorkspaces) relations.push('userWorkspaces');
+    if (fields.userWorkspaces || fields.role) relations.push('userWorkspaces');
     if (fields.userDivisions) relations.push('userDivisions.division');
     if (fields.projects) relations.push('projects');
     if (fields.tasks) relations.push('tasks');
