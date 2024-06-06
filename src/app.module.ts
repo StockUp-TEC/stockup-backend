@@ -38,7 +38,7 @@ import { PriorityLevelsModule } from './priority-levels/priority-levels.module';
       password: process.env.DB_PASSWORD,
       connectString: process.env.DB_CONNECTION_STRING,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      logging: false,
+      logging: true,
       synchronize: false,
     }),
     UsersModule,
