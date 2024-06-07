@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { EvidencesService } from './evidences.service';
 import { Evidence } from './entities/evidence.entity';
 import { CreateEvidenceInput } from './dto/create-evidence.input';

@@ -11,7 +11,6 @@ import { User } from '../../users/entities/user.entity';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Company } from '../../companies/entities/company.entity';
 import { UserWorkspace } from '../../user-workspaces/entities/user-workspace.entity';
-import { Status } from '../../statuses/entities/status.entity';
 
 @Entity({ name: 'WORKSPACE' })
 @ObjectType()

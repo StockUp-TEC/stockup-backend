@@ -11,7 +11,6 @@ import { Workspace } from './entities/workspace.entity';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceInput } from './dto/create-workspace.input';
 import { UpdateWorkspaceInput } from './dto/update-workspace.input';
-import graphqlFields from 'graphql-fields';
 import { GraphQLResolveInfo } from 'graphql/type';
 
 @Resolver(() => Workspace)
@@ -26,6 +25,7 @@ export class WorkspacesResolver {
     const authId = context.req.user.sub;
     return this.workspacesService.create(createWorkspaceInput, authId);
   }
+
   @Query(() => [Workspace], { name: 'workspaces' })
   findAll() {
     return this.workspacesService.findAll();

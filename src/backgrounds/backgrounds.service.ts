@@ -1,6 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBackgroundInput } from './dto/create-background.input';
-import { UpdateBackgroundInput } from './dto/update-background.input';
 import { Background } from './entities/background.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
