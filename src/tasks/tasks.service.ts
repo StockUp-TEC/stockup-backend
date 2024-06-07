@@ -60,7 +60,8 @@ export class TasksService {
       ...createTaskInput,
       createdBy: currentUser.id,
     });
-    return this.taskRepository.save(newTask);
+    await this.taskRepository.save(newTask);
+    return await this.findOne(newTask.id);
   }
 
   findOne(id: number) {
