@@ -13,6 +13,8 @@ import { UserDivision } from '../user-divisions/entities/user-division.entity';
 import { UpdateUserRoleInput } from './dto/update-user-role.input';
 import { GraphQLResolveInfo } from 'graphql/type';
 import * as graphqlFields from 'graphql-fields';
+import { Project } from '../projects/entities/project.entity';
+import { Task } from '../tasks/entities/task.entity';
 
 @Injectable()
 export class UsersService {
@@ -29,6 +31,10 @@ export class UsersService {
     private companyRepository: Repository<Company>,
     @InjectRepository(UserDivision)
     private userDivisionRepository: Repository<UserDivision>,
+    @InjectRepository(Project)
+    private projectRepository: Repository<Project>,
+    @InjectRepository(Task)
+    private taskRepository: Repository<Task>,
     private readonly mailersendService: MailersendService,
   ) {}
 
@@ -226,61 +232,61 @@ export class UsersService {
   }
 
   async me(authId: string, info?: GraphQLResolveInfo) {
-    const fields = info ? graphqlFields(info) : {};
-    const relations = this.getRelations(fields);
-
     const user = await this.userRepository.findOne({
       where: { authProviderId: authId },
-      relations: relations,
+      relations: ['workspaces'],
     });
+
     if (!user) {
       throw new Error('User not found');
     }
 
-    if (fields.workspaces) {
-      for (const workspace of user.workspaces) {
-        const divisions = [];
-        if (fields.workspaces.divisions) {
-          const divisionMap = new Map(
-            user.userDivisions.map((ud) => [ud.division.id, ud.division]),
-          );
-          const projectMap = new Map();
-          const taskMap = new Map();
+    // Load related data in separate queries
+    const userDivisions = await this.userDivisionRepository.find({
+      where: { userId: user.id },
+      relations: ['division'],
+    });
 
-          if (fields.workspaces.divisions.projects) {
-            user.projects.forEach((project) => {
-              if (!projectMap.has(project.divisionId)) {
-                projectMap.set(project.divisionId, []);
-              }
-              projectMap.get(project.divisionId).push(project);
-            });
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: { userId: user.id },
+      relations: ['workspace', 'role'],
+    });
 
-            if (fields.workspaces.divisions.projects.tasks) {
-              user.tasks.forEach((task) => {
-                if (!taskMap.has(task.projectId)) {
-                  taskMap.set(task.projectId, []);
-                }
-                taskMap.get(task.projectId).push(task);
-              });
-            }
-          }
+    const companies = await this.companyRepository.find({
+      where: { users: { id: user.id } },
+    });
 
-          user.userDivisions.forEach((ud) => {
-            if (divisionMap.has(ud.division.id)) {
-              const division = divisionMap.get(ud.division.id);
-              division.projects = projectMap.get(division.id) || [];
-              division.projects.forEach((project) => {
-                project.tasks = taskMap.get(project.id) || [];
-              });
-              divisions.push(division);
-            }
-          });
-        }
-        workspace.divisions = divisions.filter(
-          (division) => division.workspaceId === workspace.id,
-        );
-      }
-    }
+    const projects = await this.projectRepository.find({
+      where: { users: { id: user.id } },
+    });
+
+    const tasks = await this.taskRepository.find({
+      where: { assignedId: user.id },
+    });
+
+    // Construct the user object with all the related data
+    user.userDivisions = userDivisions;
+    user.userWorkspaces = userWorkspaces;
+    user.companies = companies;
+    user.projects = projects;
+    user.tasks = tasks;
+
+    // Add divisions to workspaces
+    user.workspaces.forEach((workspace) => {
+      workspace.divisions = userDivisions
+        .map((ud) => ud.division)
+        .filter((division) => division.workspaceId === workspace.id);
+    });
+
+    // Add projects and tasks to divisions
+    user.userDivisions.forEach((ud) => {
+      ud.division.projects = projects.filter(
+        (project) => project.divisionId === ud.division.id,
+      );
+      ud.division.projects.forEach((project) => {
+        project.tasks = tasks.filter((task) => task.projectId === project.id);
+      });
+    });
 
     return user;
   }

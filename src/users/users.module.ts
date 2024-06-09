@@ -9,6 +9,8 @@ import { UserWorkspace } from '../user-workspaces/entities/user-workspace.entity
 import { Company } from '../companies/entities/company.entity';
 import { MailersendModule } from '../mailersend/mailersend.module';
 import { UserDivision } from '../user-divisions/entities/user-division.entity';
+import { Project } from '../projects/entities/project.entity';
+import { Task } from '../tasks/entities/task.entity';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { UserDivision } from '../user-divisions/entities/user-division.entity';
       UserWorkspace,
       Company,
       UserDivision,
+      Project,
+      Task,
     ]),
     MailersendModule,
   ],
