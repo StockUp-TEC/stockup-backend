@@ -90,8 +90,9 @@ export class ProjectsService {
 
     // Check is dueDate changed
     if (
+      updateInput.dueDate &&
       new Date(updateInput.dueDate).getTime() !==
-      new Date(project.dueDate).getTime()
+        new Date(project.dueDate).getTime()
     ) {
       if (!updateInput.reason || updateInput.reason === '') {
         throw new Error('Reason is required when changing the due date.');
