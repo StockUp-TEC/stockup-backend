@@ -4,6 +4,7 @@ import { Status } from './entities/status.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, IsNull, Repository } from 'typeorm';
 import { UpdateStatusInput } from './dto/update-status.input';
+import { Task } from '../tasks/entities/task.entity';
 
 @Injectable()
 export class StatusesService {
@@ -177,11 +178,54 @@ export class StatusesService {
   }
 
   async remove(id: number) {
-    const result = await this.statusRepository.delete(id);
-    if (result.affected === 0) {
+    const status = await this.statusRepository.findOne({
+      where: { id },
+      relations: {
+        project: true,
+      },
+    });
+    if (!status) {
       throw new Error('Status not found');
     }
-    return true;
+    const projectStatuses = status.project.statuses;
+    if (projectStatuses.length === 1) {
+      throw new Error('Cannot delete the only status in the project');
+    }
+
+    // Transaction to ensure all statuses are updated or none
+    return this.statusRepository.manager.transaction(
+      async (entityManager: EntityManager) => {
+        const previousStatus = await entityManager.findOne(Status, {
+          where: { nextStatusId: id },
+        });
+        if (previousStatus) {
+          previousStatus.nextStatusId = status.nextStatusId;
+          await entityManager.update(Status, previousStatus.id, {
+            nextStatusId: status.nextStatusId,
+          });
+        }
+
+        const tasks = await entityManager.find(Task, {
+          where: { statusId: id },
+        });
+
+        for (const task of tasks) {
+          task.statusId = previousStatus
+            ? previousStatus.id
+            : status.nextStatusId;
+        }
+        await entityManager.update(
+          Task,
+          tasks.map((t) => t.id),
+          {
+            statusId: previousStatus ? previousStatus.id : status.nextStatusId,
+          },
+        );
+
+        await entityManager.delete(Status, id);
+        return true;
+      },
+    );
   }
 
   async getIndex(id: number) {
