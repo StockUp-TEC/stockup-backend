@@ -132,51 +132,52 @@ export class StatusesService {
             throw new Error('Status cannot be its own next status');
           }
 
+          // Update the previous status pointing to the current status
           const previousPreviousStatus = await entityManager.findOne(Status, {
             where: { nextStatusId: status.id },
           });
-
-          const previousStatusPointingToNextStatus =
-            await entityManager.findOne(Status, {
-              where: { nextStatusId: nextStatusId },
-            });
-
           if (previousPreviousStatus) {
-            previousPreviousStatus.nextStatusId = status.nextStatusId;
             await entityManager.update(Status, previousPreviousStatus.id, {
               nextStatusId: status.nextStatusId,
             });
           }
-          if (previousStatusPointingToNextStatus) {
-            previousStatusPointingToNextStatus.nextStatusId = status.id;
-            const result = await entityManager.update(
-              Status,
-              previousStatusPointingToNextStatus.id,
-              {
-                nextStatusId: status.id,
-              },
-            );
-          }
 
-          if (nextStatusId === null) {
-            status.nextStatusId = null;
+          // Update the status currently pointing to the new next status
+          if (nextStatusId !== null) {
+            const previousStatusPointingToNextStatus =
+              await entityManager.findOne(Status, {
+                where: { nextStatusId: nextStatusId },
+              });
+            if (previousStatusPointingToNextStatus) {
+              await entityManager.update(
+                Status,
+                previousStatusPointingToNextStatus.id,
+                { nextStatusId: status.id },
+              );
+            }
+          } else {
+            // Handle the case when nextStatusId is null
             const previousLastStatus = await entityManager.findOne(Status, {
               where: { nextStatusId: IsNull(), projectId: status.projectId },
             });
             if (previousLastStatus) {
-              previousLastStatus.nextStatusId = status.id;
               await entityManager.update(Status, previousLastStatus.id, {
                 nextStatusId: status.id,
               });
             }
           }
+
+          // Update the current status's nextStatusId
+          status.nextStatusId = nextStatusId;
         }
 
+        // Save the status with the updated fields
         await entityManager.update(Status, status.id, {
           name: status.name,
           color: status.color,
-          nextStatusId: nextStatusId,
+          nextStatusId: status.nextStatusId,
         });
+
         return true;
       },
     );
