@@ -218,13 +218,17 @@ export class StatusesService {
             ? previousStatus.id
             : status.nextStatusId;
         }
-        await entityManager.update(
-          Task,
-          tasks.map((t) => t.id),
-          {
-            statusId: previousStatus ? previousStatus.id : status.nextStatusId,
-          },
-        );
+        if (tasks.length > 0) {
+          await entityManager.update(
+            Task,
+            tasks.map((t) => t.id),
+            {
+              statusId: previousStatus
+                ? previousStatus.id
+                : status.nextStatusId,
+            },
+          );
+        }
 
         await entityManager.delete(Status, id);
         return true;
