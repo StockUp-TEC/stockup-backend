@@ -160,7 +160,7 @@ export class StatusesService {
           if (nextStatusId === null) {
             status.nextStatusId = null;
             const previousLastStatus = await entityManager.findOne(Status, {
-              where: { nextStatusId: IsNull() },
+              where: { nextStatusId: IsNull(), projectId: status.projectId },
             });
             if (previousLastStatus) {
               previousLastStatus.nextStatusId = status.id;
