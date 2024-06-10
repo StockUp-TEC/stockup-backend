@@ -12,9 +12,6 @@ export class UpdateTaskInput {
   statusId?: number;
 
   @Field(() => Int, { nullable: true })
-  projectId?: number;
-
-  @Field(() => Int, { nullable: true })
   assignedId?: number;
 
   @Field({ nullable: true })
