@@ -21,6 +21,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { StatusesModule } from './statuses/statuses.module';
 import { BackgroundsModule } from './backgrounds/backgrounds.module';
 import { PriorityLevelsModule } from './priority-levels/priority-levels.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { PriorityLevelsModule } from './priority-levels/priority-levels.module';
       logging: true,
       synchronize: false,
     }),
+    ScheduleModule.forRoot(),
     UsersModule,
     WorkspacesModule,
     DivisionsModule,

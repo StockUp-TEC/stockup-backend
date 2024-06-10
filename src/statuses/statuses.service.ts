@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, IsNull, Repository } from 'typeorm';
 import { UpdateStatusInput } from './dto/update-status.input';
 import { Task } from '../tasks/entities/task.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class StatusesService {
@@ -106,7 +107,7 @@ export class StatusesService {
     updateStatusId: number,
     updateStatusInput: UpdateStatusInput,
   ): Promise<boolean> {
-    return await this.statusRepository.manager.transaction(
+    return this.statusRepository.manager.transaction(
       async (entityManager: EntityManager) => {
         const status = await entityManager.findOne(Status, {
           where: { id: updateStatusId },
@@ -245,5 +246,40 @@ export class StatusesService {
     });
 
     return statuses.findIndex((s) => s.id === id);
+  }
+
+  @Cron(CronExpression.EVERY_2_HOURS)
+  integrityCheck() {
+    console.log('Running status integrity check');
+    return this.statusRepository.manager.transaction(
+      async (entityManager: EntityManager) => {
+        const statuses = await entityManager.find(Status, {
+          relations: {
+            nextStatus: true,
+          },
+        });
+
+        for (const status of statuses) {
+          if (status.nextStatusId) {
+            const nextStatus = statuses.find(
+              (s) => s.id === status.nextStatusId,
+            );
+            if (!nextStatus) {
+              // Next status not found
+              await entityManager.update(Status, status.id, {
+                nextStatusId: null,
+              });
+              return;
+            }
+            if (nextStatus.nextStatusId === status.id) {
+              // Circular reference detected
+              throw new Error(
+                'Circular reference detected in status with ID ' + status.id,
+              );
+            }
+          }
+        }
+      },
+    );
   }
 }
