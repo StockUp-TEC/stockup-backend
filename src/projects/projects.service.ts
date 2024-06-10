@@ -9,6 +9,7 @@ import { UpdateProjectInput } from './dto/update-project.input';
 import { ProjectHistory } from './entities/project-history.entity';
 import { BackgroundsService } from '../backgrounds/backgrounds.service';
 import { StatusesService } from '../statuses/statuses.service';
+import { Task } from '../tasks/entities/task.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -17,6 +18,8 @@ export class ProjectsService {
     private projectRepository: Repository<Project>,
     @InjectRepository(ProjectHistory)
     private projectHistoryRepository: Repository<ProjectHistory>,
+    @InjectRepository(Task)
+    private taskRepository: Repository<Task>,
     private readonly userDivisionService: UserDivisionsService,
     private readonly usersService: UsersService,
     private readonly backgroundsService: BackgroundsService,
@@ -114,6 +117,7 @@ export class ProjectsService {
   }
 
   async remove(id: number) {
+    await this.taskRepository.delete({ projectId: id });
     await this.statusesService.removeForProject(id);
     const result = await this.projectRepository.delete(id);
     if (result.affected === 0) {

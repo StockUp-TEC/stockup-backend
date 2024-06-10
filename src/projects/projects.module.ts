@@ -8,6 +8,7 @@ import { UsersModule } from '../users/users.module';
 import { ProjectHistory } from './entities/project-history.entity';
 import { BackgroundsModule } from '../backgrounds/backgrounds.module';
 import { StatusesModule } from '../statuses/statuses.module';
+import { Task } from '../tasks/entities/task.entity';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { StatusesModule } from '../statuses/statuses.module';
     UsersModule,
     BackgroundsModule,
     StatusesModule,
-    TypeOrmModule.forFeature([Project, ProjectHistory]),
+    TypeOrmModule.forFeature([Project, ProjectHistory, Task]),
   ],
   providers: [ProjectsResolver, ProjectsService],
   exports: [ProjectsService],
