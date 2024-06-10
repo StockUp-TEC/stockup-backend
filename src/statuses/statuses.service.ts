@@ -237,27 +237,48 @@ export class StatusesService {
   }
 
   async getIndex(id: number) {
+    // Retrieve the status with its related project
     const status = await this.statusRepository.findOne({
       where: { id },
-      relations: {
-        project: true,
-      },
+      relations: ['project'],
     });
+
+    // Throw an error if the status is not found
     if (!status) {
       throw new Error('Status not found');
     }
 
+    // Retrieve all statuses belonging to the same project
     const statuses = await this.statusRepository.find({
-      where: { projectId: status.project.id },
+      where: { project: { id: status.project.id } },
     });
 
+    // Map statuses by their IDs for quick lookup
+    const statusMap = new Map<number, typeof status>();
+    statuses.forEach((s) => statusMap.set(s.id, s));
+
+    // Find the start of the chain (the status with no previous status pointing to it)
+    const startStatus = statuses.find(
+      (s) => !statuses.some((other) => other.nextStatusId === s.id),
+    );
+
+    if (!startStatus) {
+      throw new Error('Start status not found');
+    }
+
     let index = 0;
-    let currentStatus = status;
-    while (currentStatus && currentStatus.nextStatusId) {
-      currentStatus = statuses.find((s) => s.id === currentStatus.nextStatusId);
+    let currentStatus = startStatus;
+
+    // Traverse the chain to find the index of the given status
+    while (currentStatus) {
+      if (currentStatus.id === id) {
+        return index;
+      }
+      currentStatus = statusMap.get(currentStatus.nextStatusId);
       index++;
     }
-    return index;
+
+    throw new Error('Status is not part of the project');
   }
 
   @Cron(CronExpression.EVERY_2_HOURS)
