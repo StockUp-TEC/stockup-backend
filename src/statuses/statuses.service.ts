@@ -71,9 +71,9 @@ export class StatusesService {
     return await this.statusRepository.manager.transaction(
       async (entityManager: EntityManager) => {
         const statuses = [
-          { name: 'To Do', color: '#FF0000' },
-          { name: 'In Progress', color: '#00FF00' },
-          { name: 'Done', color: '#0000FF' },
+          { name: 'To Do', color: 'FF0000' },
+          { name: 'In Progress', color: '00FF00' },
+          { name: 'Done', color: '0000FF' },
         ];
 
         let previousStatus: Status = null;
@@ -83,7 +83,7 @@ export class StatusesService {
             projectId,
           });
           if (previousStatus) {
-            newStatus.nextStatus = previousStatus;
+            newStatus.nextStatusId = previousStatus.id;
           }
           previousStatus = newStatus;
           await entityManager.save(newStatus);
@@ -249,10 +249,16 @@ export class StatusesService {
 
     const statuses = await this.statusRepository.find({
       where: { projectId: status.project.id },
-      order: { id: 'ASC' },
     });
 
-    return statuses.findIndex((s) => s.id === id);
+    // Find the index of the status in the linked list
+    let index = 0;
+    let currentStatus = status;
+    while (currentStatus.nextStatusId) {
+      currentStatus = statuses.find((s) => s.id === currentStatus.nextStatusId);
+      index++;
+    }
+    return index;
   }
 
   @Cron(CronExpression.EVERY_2_HOURS)
@@ -286,6 +292,22 @@ export class StatusesService {
             }
           }
         }
+      },
+    );
+  }
+
+  async removeForProject(projectId: number) {
+    const statuses = await this.statusRepository.find({
+      where: { projectId },
+    });
+    if (statuses.length === 0) {
+      return;
+    }
+
+    return this.statusRepository.manager.transaction(
+      async (entityManager: EntityManager) => {
+        const statusIds = statuses.map((s) => s.id);
+        await entityManager.delete(Status, statusIds);
       },
     );
   }

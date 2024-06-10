@@ -114,6 +114,7 @@ export class ProjectsService {
   }
 
   async remove(id: number) {
+    await this.statusesService.removeForProject(id);
     const result = await this.projectRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Project with ID ${id} not found.`);
