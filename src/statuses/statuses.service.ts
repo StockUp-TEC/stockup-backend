@@ -135,17 +135,18 @@ export class StatusesService {
           const previousPreviousStatus = await entityManager.findOne(Status, {
             where: { nextStatusId: status.id },
           });
+
+          const previousStatusPointingToNextStatus =
+            await entityManager.findOne(Status, {
+              where: { nextStatusId: nextStatusId },
+            });
+
           if (previousPreviousStatus) {
             previousPreviousStatus.nextStatusId = status.nextStatusId;
             await entityManager.update(Status, previousPreviousStatus.id, {
               nextStatusId: status.nextStatusId,
             });
           }
-
-          const previousStatusPointingToNextStatus =
-            await entityManager.findOne(Status, {
-              where: { nextStatusId: nextStatusId },
-            });
           if (previousStatusPointingToNextStatus) {
             previousStatusPointingToNextStatus.nextStatusId = status.id;
             await entityManager.update(
