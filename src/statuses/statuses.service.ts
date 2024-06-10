@@ -331,4 +331,10 @@ export class StatusesService {
       },
     );
   }
+
+  async findAllForProject(projectId: number) {
+    return this.statusRepository.find({
+      where: { projectId },
+    });
+  }
 }

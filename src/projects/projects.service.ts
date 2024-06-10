@@ -58,15 +58,12 @@ export class ProjectsService {
         users: true,
         background: true,
         history: true,
-        division: true,
-        statuses: {
-          tasks: true,
-        },
       },
     });
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found.`);
     }
+    project.statuses = await this.statusesService.findAllForProject(project.id);
     project.tasks = project.tasks.filter((task) => !task.parentTaskId);
     return project;
   }
