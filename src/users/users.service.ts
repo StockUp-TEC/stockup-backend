@@ -258,6 +258,13 @@ export class UsersService {
 
     const projects = await this.projectRepository.find({
       where: { users: { id: user.id } },
+      relations: {
+        statuses: {
+          tasks: {
+            priority: true,
+          },
+        },
+      },
     });
 
     const tasks = await this.taskRepository.find({

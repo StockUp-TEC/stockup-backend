@@ -61,6 +61,11 @@ export class ProjectsService {
         users: true,
         background: true,
         history: true,
+        statuses: {
+          tasks: {
+            priority: true,
+          },
+        },
       },
     });
     if (!project) {
@@ -69,7 +74,6 @@ export class ProjectsService {
     project.division = await this.divisionRepository.findOne({
       where: { id: project.divisionId },
     });
-    project.statuses = await this.statusesService.findAllForProject(project.id);
     project.tasks = project.tasks.filter((task) => !task.parentTaskId);
     return project;
   }
