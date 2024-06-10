@@ -251,10 +251,9 @@ export class StatusesService {
       where: { projectId: status.project.id },
     });
 
-    // Find the index of the status in the linked list
     let index = 0;
     let currentStatus = status;
-    while (currentStatus.nextStatusId) {
+    while (currentStatus && currentStatus.nextStatusId) {
       currentStatus = statuses.find((s) => s.id === currentStatus.nextStatusId);
       index++;
     }
