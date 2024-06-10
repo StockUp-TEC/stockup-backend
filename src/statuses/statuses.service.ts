@@ -46,7 +46,7 @@ export class StatusesService {
     } else {
       // Find the last status
       const lastStatus = await this.statusRepository.findOne({
-        where: { nextStatus: IsNull() },
+        where: { nextStatus: IsNull(), projectId: projectId },
       });
 
       if (lastStatus) {
