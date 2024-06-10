@@ -149,7 +149,7 @@ export class StatusesService {
           }
           if (previousStatusPointingToNextStatus) {
             previousStatusPointingToNextStatus.nextStatusId = status.id;
-            await entityManager.update(
+            const result = await entityManager.update(
               Status,
               previousStatusPointingToNextStatus.id,
               {
