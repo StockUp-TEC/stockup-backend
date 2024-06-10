@@ -56,9 +56,12 @@ export class StatusesService {
 
     const newStatus = await this.statusRepository.save(status);
     if (previousLastStatus) {
-      await this.statusRepository.update(previousLastStatus.id, {
-        nextStatusId: newStatus.id,
-      });
+      const updateResult = await this.statusRepository.update(
+        previousLastStatus.id,
+        {
+          nextStatusId: newStatus.id,
+        },
+      );
     }
     return newStatus;
   }
