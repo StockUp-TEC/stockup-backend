@@ -10,6 +10,7 @@ import { ProjectHistory } from './entities/project-history.entity';
 import { BackgroundsService } from '../backgrounds/backgrounds.service';
 import { StatusesService } from '../statuses/statuses.service';
 import { Task } from '../tasks/entities/task.entity';
+import { Division } from '../divisions/entities/division.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -20,6 +21,8 @@ export class ProjectsService {
     private projectHistoryRepository: Repository<ProjectHistory>,
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
+    @InjectRepository(Division)
+    private divisionRepository: Repository<Division>,
     private readonly userDivisionService: UserDivisionsService,
     private readonly usersService: UsersService,
     private readonly backgroundsService: BackgroundsService,
@@ -63,6 +66,9 @@ export class ProjectsService {
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found.`);
     }
+    project.division = await this.divisionRepository.findOne({
+      where: { id: project.divisionId },
+    });
     project.statuses = await this.statusesService.findAllForProject(project.id);
     project.tasks = project.tasks.filter((task) => !task.parentTaskId);
     return project;
