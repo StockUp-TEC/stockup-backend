@@ -71,9 +71,9 @@ export class StatusesService {
     return await this.statusRepository.manager.transaction(
       async (entityManager: EntityManager) => {
         const statuses = [
-          { name: 'To Do', color: 'FF0000' },
-          { name: 'In Progress', color: '00FF00' },
           { name: 'Done', color: '0000FF' },
+          { name: 'In Progress', color: '00FF00' },
+          { name: 'To Do', color: 'FF0000' },
         ];
 
         let previousStatus: Status = null;
