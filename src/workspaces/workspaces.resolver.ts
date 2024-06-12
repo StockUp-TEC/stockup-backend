@@ -46,7 +46,7 @@ export class WorkspacesResolver {
     return this.workspacesService.update(updateWorkspaceInput);
   }
 
-  @Mutation(() => Workspace)
+  @Mutation(() => Boolean)
   removeWorkspace(@Args('id', { type: () => Int }) id: number) {
     return this.workspacesService.remove(id);
   }

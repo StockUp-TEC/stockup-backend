@@ -64,7 +64,8 @@ export class WorkspacesService {
 
   async remove(id: number) {
     await this.userWorkspaceService.removeAllUsersFromWorkspace(id);
-    return this.workspaceRepository.delete(id);
+    const result = await this.workspaceRepository.delete(id);
+    return result.affected === 1;
   }
 
   private getRelations(info: GraphQLResolveInfo): string[] {
