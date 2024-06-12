@@ -11,10 +11,9 @@ import { Company } from '../companies/entities/company.entity';
 import { MailersendService } from '../mailersend/mailersend.service';
 import { UserDivision } from '../user-divisions/entities/user-division.entity';
 import { UpdateUserRoleInput } from './dto/update-user-role.input';
-import { GraphQLResolveInfo } from 'graphql/type';
-import * as graphqlFields from 'graphql-fields';
 import { Project } from '../projects/entities/project.entity';
 import { Task } from '../tasks/entities/task.entity';
+import { FirebaseStorageService } from '../firebase-storage/firebase-storage.service';
 
 @Injectable()
 export class UsersService {
@@ -36,6 +35,7 @@ export class UsersService {
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
     private readonly mailersendService: MailersendService,
+    private readonly firebaseStorageService: FirebaseStorageService,
   ) {}
 
   async create(createUserInput: CreateUserInput) {
@@ -221,17 +221,25 @@ export class UsersService {
       throw new Error('User not found');
     }
 
+    const image = await fetch(imageUrl);
+    const arrayBuffer = await image.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const fileName = `${authId}.jpg`;
+    const profilePictureUrl =
+      await this.firebaseStorageService.uploadProfilePicture(buffer, fileName);
+
     await this.userRepository.update(user.id, {
       name,
       authProviderId: authId,
-      imageUrl,
+      imageUrl: profilePictureUrl,
       phoneNumber,
     });
 
     return true;
   }
 
-  async me(authId: string, info?: GraphQLResolveInfo) {
+  async me(authId: string) {
     const user = await this.userRepository.findOne({
       where: { authProviderId: authId },
       relations: ['workspaces'],
@@ -345,30 +353,5 @@ export class UsersService {
     }
 
     return true;
-  }
-
-  private getRelations(fields: any) {
-    const relations = [];
-
-    // Based on requested fields, push necessary relations
-    if (fields.workspaces) {
-      relations.push('workspaces');
-      if (fields.workspaces.divisions) {
-        relations.push('userDivisions.division');
-        if (fields.workspaces.divisions.projects) {
-          relations.push('projects');
-          if (fields.workspaces.divisions.projects.tasks) {
-            relations.push('tasks');
-          }
-        }
-      }
-    }
-    if (fields.companies) relations.push('companies');
-    if (fields.userWorkspaces || fields.role) relations.push('userWorkspaces');
-    if (fields.userDivisions) relations.push('userDivisions.division');
-    if (fields.projects) relations.push('projects');
-    if (fields.tasks) relations.push('tasks');
-
-    return relations;
   }
 }

@@ -39,7 +39,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       password: process.env.DB_PASSWORD,
       connectString: process.env.DB_CONNECTION_STRING,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      logging: false,
+      logging: true,
       synchronize: false,
     }),
     ScheduleModule.forRoot(),

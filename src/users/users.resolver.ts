@@ -82,12 +82,12 @@ export class UsersResolver {
 
   // Get authenticated user
   @Query(() => User, { name: 'me' })
-  async me(@Context() context, @Info() info: GraphQLResolveInfo) {
+  async me(@Context() context) {
     const authId = context.req.user.sub;
     if (!authId) {
       throw new Error('User not found: no authId in context');
     }
-    return this.usersService.me(authId, info);
+    return this.usersService.me(authId);
   }
 
   @ResolveField(() => Role, { name: 'role', nullable: true })

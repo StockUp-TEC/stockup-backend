@@ -11,6 +11,7 @@ import { MailersendModule } from '../mailersend/mailersend.module';
 import { UserDivision } from '../user-divisions/entities/user-division.entity';
 import { Project } from '../projects/entities/project.entity';
 import { Task } from '../tasks/entities/task.entity';
+import { FirebaseStorageModule } from '../firebase-storage/firebase-storage.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { Task } from '../tasks/entities/task.entity';
       Task,
     ]),
     MailersendModule,
+    FirebaseStorageModule,
   ],
   providers: [UsersResolver, UsersService],
   exports: [UsersService],
