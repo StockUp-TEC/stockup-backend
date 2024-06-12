@@ -225,9 +225,13 @@ export class UsersService {
     const arrayBuffer = await image.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
+    console.log('Saving profile picture');
     const fileName = `${authId}.jpg`;
     const profilePictureUrl =
       await this.firebaseStorageService.uploadProfilePicture(buffer, fileName);
+
+    console.log('Profile picture saved');
+    console.log('Updating user data');
 
     await this.userRepository.update(user.id, {
       name,
@@ -235,6 +239,8 @@ export class UsersService {
       imageUrl: profilePictureUrl,
       phoneNumber,
     });
+
+    console.log('User data updated');
 
     return true;
   }
