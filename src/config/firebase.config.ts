@@ -4,7 +4,7 @@ import applicationDefault = credential.applicationDefault;
 
 admin.initializeApp({
   credential: applicationDefault(),
-  storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`,
+  storageBucket: `stockup-tec.appspot.com`,
 });
 
 export const storage = admin.storage().bucket();
