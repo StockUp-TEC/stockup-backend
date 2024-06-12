@@ -7,6 +7,9 @@ import { Workspace } from '../workspaces/entities/workspace.entity';
 import { User } from '../users/entities/user.entity';
 import { Role } from '../roles/entities/role.entity';
 import { DeleteUserWorkspaceInput } from './dto/delete-user-workspace.input';
+import { UserDivisionsService } from '../user-divisions/user-divisions.service';
+import { CompaniesService } from '../companies/companies.service';
+import { EvidencesService } from '../evidences/evidences.service';
 
 @Injectable()
 export class UserWorkspacesService {
@@ -19,6 +22,9 @@ export class UserWorkspacesService {
     private workspaceRepository: Repository<Workspace>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+    private readonly userDivisionsService: UserDivisionsService,
+    private readonly companiesService: CompaniesService,
+    private readonly evidencesService: EvidencesService,
   ) {}
 
   async validateUsersAndWorkspace(userIds: number[], workspaceId: number) {
@@ -95,7 +101,10 @@ export class UserWorkspacesService {
       throw new Error('Workspace must have at least one admin');
     }
 
-    await this.userWorkspaceRepository.remove(oldUserWorkspaces);
+    await this.removeUsersFromWorkspace({
+      userIds: oldUserWorkspaces.map((uw) => uw.userId),
+      workspaceId: input.workspaceId,
+    });
 
     return this.userWorkspaceRepository.save(userWorkspaces);
   }
@@ -107,7 +116,16 @@ export class UserWorkspacesService {
       where: {
         workspaceId: input.workspaceId,
       },
+      relations: {
+        user: {
+          userDivisions: true,
+        },
+      },
     });
+
+    const evidences = await this.evidencesService.findForWorkspace(
+      input.workspaceId,
+    );
 
     const usersToRemove = userWorkspaces.filter((uw) =>
       input.userIds.includes(uw.userId),
@@ -125,6 +143,26 @@ export class UserWorkspacesService {
       throw new Error('Workspace must have at least one admin');
     }
 
+    // Remove from divisions and evidences
+    for (const user of usersToRemove) {
+      for (const userDivision of user.user.userDivisions) {
+        await this.userDivisionsService.removeUserFromDivision(
+          userDivision.userId,
+          userDivision.divisionId,
+        );
+      }
+      const userEvidences = evidences.filter((e) =>
+        e.users.some((u) => u.id === user.userId),
+      );
+      for (const evidence of userEvidences) {
+        await this.evidencesService.unlinkUser(evidence.id, user.userId);
+      }
+    }
+    // Remove from companies
+    await this.companiesService.removeUsersFromCompaniesInWorkspace(
+      input.userIds,
+      input.workspaceId,
+    );
     await this.userWorkspaceRepository.remove(usersToRemove);
     return true;
   }

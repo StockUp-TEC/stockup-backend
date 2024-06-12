@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDivision } from './entities/user-division.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { Division } from '../divisions/entities/division.entity';
 import { CreateUserDivisionInput } from './dto/create-user-division.input';
@@ -130,5 +130,18 @@ export class UserDivisionsService {
       where: { divisionId },
       relations: ['user'],
     });
+  }
+
+  async removeUserFromDivision(userId: number, divisionId: number) {
+    const result = await this.userDivisionRepository.delete({
+      userId,
+      divisionId,
+    });
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `User with ID ${userId} not found in division with ID ${divisionId}.`,
+      );
+    }
+    return true;
   }
 }

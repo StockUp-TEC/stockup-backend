@@ -18,9 +18,8 @@ export class TasksService {
     @InjectRepository(TaskHistory)
     private taskHistoryRepository: Repository<TaskHistory>,
     private readonly userService: UsersService,
+    @Inject(forwardRef(() => ProjectsService))
     private readonly projectService: ProjectsService,
-    @Inject(forwardRef(() => StatusesService))
-    private readonly statusService: StatusesService,
     private readonly priorityService: PriorityLevelsService,
   ) {}
 
@@ -152,6 +151,12 @@ export class TasksService {
   async findSubTasks(parentTaskId: number) {
     return this.taskRepository.find({
       where: { parentTaskId },
+    });
+  }
+
+  async unlinkUserFromTask(taskId: number) {
+    return this.taskRepository.update(taskId, {
+      assignedId: null,
     });
   }
 }

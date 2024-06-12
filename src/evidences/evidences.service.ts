@@ -62,4 +62,16 @@ export class EvidencesService {
     await this.evidenceRepository.delete(id);
     return true;
   }
+
+  async unlinkUser(evidenceId: number, userId: number) {
+    const evidence = await this.evidenceRepository.findOne({
+      where: { id: evidenceId },
+      relations: {
+        users: true,
+      },
+    });
+    const users = evidence.users.filter((u) => u.id !== userId);
+    await this.evidenceRepository.update(evidenceId, { users });
+    return true;
+  }
 }

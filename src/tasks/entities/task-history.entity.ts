@@ -59,6 +59,9 @@ export class TaskHistory {
   @Field()
   updatedBy: number;
 
+  @Column({ name: 'TASK_ID' })
+  taskId: number;
+
   @ManyToOne(() => Task)
   @JoinColumn({ name: 'TASK_ID' })
   task: Task;

@@ -6,7 +6,6 @@ import { Task } from './entities/task.entity';
 import { TaskHistory } from './entities/task-history.entity';
 import { UsersModule } from '../users/users.module';
 import { ProjectsModule } from '../projects/projects.module';
-import { StatusesModule } from '../statuses/statuses.module';
 import { PriorityLevelsModule } from '../priority-levels/priority-levels.module';
 
 @Module({
@@ -14,7 +13,6 @@ import { PriorityLevelsModule } from '../priority-levels/priority-levels.module'
     TypeOrmModule.forFeature([Task, TaskHistory]),
     UsersModule,
     forwardRef(() => ProjectsModule),
-    forwardRef(() => StatusesModule),
     PriorityLevelsModule,
   ],
   providers: [TasksResolver, TasksService],

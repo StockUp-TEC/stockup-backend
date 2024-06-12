@@ -11,6 +11,7 @@ import { BackgroundsService } from '../backgrounds/backgrounds.service';
 import { StatusesService } from '../statuses/statuses.service';
 import { Task } from '../tasks/entities/task.entity';
 import { Division } from '../divisions/entities/division.entity';
+import { TasksService } from '../tasks/tasks.service';
 
 @Injectable()
 export class ProjectsService {
@@ -27,6 +28,7 @@ export class ProjectsService {
     private readonly usersService: UsersService,
     private readonly backgroundsService: BackgroundsService,
     private readonly statusesService: StatusesService,
+    private readonly tasksService: TasksService,
   ) {}
 
   async create(createProjectInput: CreateProjectInput, authId: string) {
@@ -131,5 +133,27 @@ export class ProjectsService {
       throw new NotFoundException(`Project with ID ${id} not found.`);
     }
     return true;
+  }
+
+  async removeUserFromProject(userId: number, projectId: number) {
+    // Remove user from project tasks
+    const projectTasks = await this.tasksService.findAllForProject(projectId);
+    const userTasks = projectTasks.filter((task) => task.assignedId === userId);
+    for (const task of userTasks) {
+      await this.tasksService.unlinkUserFromTask(task.id);
+    }
+    // Remove user from project
+    const project = await this.projectRepository.findOne({
+      where: { id: projectId },
+      relations: {
+        users: true,
+      },
+    });
+
+    const updatedUsers = project.users.filter((user) => user.id !== userId);
+
+    await this.projectRepository.update(projectId, {
+      users: updatedUsers,
+    });
   }
 }

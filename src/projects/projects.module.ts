@@ -10,6 +10,7 @@ import { BackgroundsModule } from '../backgrounds/backgrounds.module';
 import { StatusesModule } from '../statuses/statuses.module';
 import { Task } from '../tasks/entities/task.entity';
 import { Division } from '../divisions/entities/division.entity';
+import { TasksModule } from '../tasks/tasks.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Division } from '../divisions/entities/division.entity';
     UsersModule,
     BackgroundsModule,
     StatusesModule,
+    TasksModule,
     TypeOrmModule.forFeature([Project, ProjectHistory, Task, Division]),
   ],
   providers: [ProjectsResolver, ProjectsService],

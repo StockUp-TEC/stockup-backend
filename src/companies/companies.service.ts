@@ -77,6 +77,35 @@ export class CompaniesService {
     return true;
   }
 
+  async removeUsersFromCompaniesInWorkspace(
+    userIds: number[],
+    workspaceId: number,
+  ) {
+    const companies = await this.companyRepository.find({
+      relations: {
+        users: true,
+      },
+    });
+
+    const users = await this.userRepository.find({
+      where: {
+        id: In(userIds),
+      },
+      relations: {
+        companies: true,
+      },
+    });
+
+    for (const user of users) {
+      for (const company of user.companies) {
+        if (company.workspaceId === workspaceId) {
+          await this.removeUserFromCompany(user.id, company.id);
+        }
+      }
+    }
+    return true;
+  }
+
   async updateCompanyUsers(companyId: number, userIds: number[]) {
     const company = await this.companyRepository.findOneBy({ id: companyId });
 
