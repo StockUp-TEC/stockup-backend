@@ -334,6 +334,14 @@ export class UsersService {
       workspaceId: workspaceId,
     });
 
+    const adminsInWorkspace = await this.userWorkspaceRepository.find({
+      where: { workspaceId: workspaceId, roleId: 1 },
+    });
+
+    if (role.id === 1 && adminsInWorkspace.length === 1) {
+      throw new Error('There must be at least one admin in the workspace');
+    }
+
     if (!userWorkspace) {
       throw new Error('User not found in workspace');
     }

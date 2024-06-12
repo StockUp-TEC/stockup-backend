@@ -89,6 +89,12 @@ export class UserWorkspacesService {
             newUserWorkspace.userId === existingUserWorkspace.userId,
         ),
     );
+
+    const admins = userWorkspaces.filter((uw) => uw.roleId === 1);
+    if (admins.length < 1) {
+      throw new Error('Workspace must have at least one admin');
+    }
+
     await this.userWorkspaceRepository.remove(oldUserWorkspaces);
 
     return this.userWorkspaceRepository.save(userWorkspaces);
@@ -106,6 +112,18 @@ export class UserWorkspacesService {
     const usersToRemove = userWorkspaces.filter((uw) =>
       input.userIds.includes(uw.userId),
     );
+
+    if (usersToRemove.length < 1) {
+      throw new Error('No users to remove');
+    }
+
+    const currentAdmins = userWorkspaces.filter(
+      (uw) => uw.roleId === 1 && !input.userIds.includes(uw.userId),
+    );
+
+    if (currentAdmins.length < 1) {
+      throw new Error('Workspace must have at least one admin');
+    }
 
     await this.userWorkspaceRepository.remove(usersToRemove);
     return true;
