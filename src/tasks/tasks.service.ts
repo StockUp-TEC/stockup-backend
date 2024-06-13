@@ -67,9 +67,11 @@ export class TasksService {
     return this.taskRepository.findOne({
       where: { id },
       relations: {
+        priority: true,
         subTasks: {
           subTasks: true,
         },
+        history: true,
       },
     });
   }
