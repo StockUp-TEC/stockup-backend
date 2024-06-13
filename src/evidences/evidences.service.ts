@@ -20,6 +20,11 @@ export class EvidencesService {
     authProviderId: string,
   ) {
     const { id } = await this.usersService.me(authProviderId);
+
+    if (createEvidenceInput.companyIds.length === 0) {
+      throw new Error('At least one company must be selected.');
+    }
+
     const users = await this.usersService.findByIds(
       createEvidenceInput.userIds,
     );
